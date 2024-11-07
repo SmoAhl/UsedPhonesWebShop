@@ -1,0 +1,61 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\obj\\Debug\\net8.0\\compressed\\vr8e71o4f7.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\obj\\Debug\\net8.0\\scopedcss\\bundle\\frontend.styles.css",
+      "PackagePath": "staticwebassets\\frontend.styles.css"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\icon-192.png",
+      "PackagePath": "staticwebassets\\icon-192.png"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\sample-data\\weather.json",
+      "PackagePath": "staticwebassets\\sample-data\\weather.json"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.frontend.props",
+      "PackagePath": "build\\frontend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.frontend.props",
+      "PackagePath": "buildMultiTargeting\\frontend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.frontend.props",
+      "PackagePath": "buildTransitive\\frontend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.frontend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

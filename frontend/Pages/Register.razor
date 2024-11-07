@@ -1,0 +1,85 @@
+@page "/register"
+@inject HttpClient Http
+@using Shared.Models
+@using System.Net.Http.Json
+
+<h3>Rekisteröidy</h3>
+
+<div>
+    <label>Sähköposti:</label>
+    <input @bind="User.Email" />
+</div>
+<div>
+    <label>Salasana:</label>
+    <input type="password" @bind="User.PasswordHash" />
+</div>
+<div>
+    <label>Etunimi:</label>
+    <input @bind="User.FirstName" />
+</div>
+<div>
+    <label>Sukunimi:</label>
+    <input @bind="User.LastName" />
+</div>
+<div>
+    <label>Osoite:</label>
+    <input @bind="User.Address" />
+</div>
+<div>
+    <label>Puhelinnumero:</label>
+    <input @bind="User.PhoneNumber" />
+</div>
+<div>
+    <button @onclick="RegisterUser">Rekisteröidy</button>
+</div>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <p>@Message</p> <!-- Näyttää viestin onnistuneesta tai epäonnistuneesta rekisteröinnistä -->
+}
+
+@code {
+    // Käyttäjän tiedot UserModel-oliolla
+    private UserModel User { get; set; } = new UserModel();
+    private string Message { get; set; } = string.Empty; // Viesti rekisteröinnin tuloksesta
+
+    // Metodi, joka lähettää rekisteröintitiedot backendille
+    private async Task RegisterUser()
+    {
+        try
+        {
+            // Lähetetään käyttäjän tiedot rekisteröintipäätepisteelle
+            var response = await Http.PostAsJsonAsync("/api/auth/register", User);
+            if (response.IsSuccessStatusCode)
+            {
+                Message = "Rekisteröinti onnistui!"; // Viesti onnistuneesta rekisteröinnistä
+            }
+            else
+            {
+                // Yritetään lukea virhe JSON-muodossa
+                try
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                    if (errorResponse != null && errorResponse.TryGetValue("Error", out var error))
+                    {
+                        Message = $"Rekisteröinti epäonnistui: {error}";
+                    }
+                    else
+                    {
+                        Message = "Rekisteröinti epäonnistui: tuntematon virhe.";
+                    }
+                }
+                catch
+                {
+                    // Jos JSON-lukeminen epäonnistuu, luetaan virhe tekstimuodossa
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    Message = $"Rekisteröinti epäonnistui: {errorText}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Virhe rekisteröityessä: {ex.Message}"; // Virheviesti, jos pyyntö epäonnistuu
+        }
+    }
+}
