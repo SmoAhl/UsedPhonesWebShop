@@ -69,3 +69,4 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\n
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\obj\Debug\net8.0\backend.sourcelink.json

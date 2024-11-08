@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Shared.Models;
+using Shared.DTOs;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,56 +23,95 @@ namespace Backend.Api
 
             // PATCH-pyyntö reitille /api/phones/{id}, joka päivittää annettuja kenttiä puhelimen tiedoissa
             app.MapPatch("/api/phones/{id}", UpdatePhonePartial);
+            //PUT: Kokonaispäivitys. Korvaa koko resurssin.
+            //PATCH: Osittainen päivitys. Päivittää vain tietyt resurssin osat.
         }
 
-        // GetPhones metodi, joka hakee kaikki puhelimet tietokannasta ja palauttaa ne JSON-muodossa
-        //
-        // Tämä logiikka mahdollistaa kaikkien puhelimien noutamisen kerralla, jolloin niitä voidaan näyttää
-        // käyttöliittymässä esimerkiksi listana. Asynkroninen käsittely mahdollistaa tehokkaan tietokantayhteyden
-        // hallinnan, ja JSON-muoto mahdollistaa tiedon sujuvan siirron web-ympäristössä.
-
-        private static async Task<IResult> GetPhones()
+        // GetPhones metodi, joka hakee puhelimia tietokannasta ja mahdollistaa suodatuksen valinnaisilla parametreilla
+        // Tämä metodi hyödyntää valinnaisia kyselyparametreja, kuten "brand", "model", "condition" ja "maxPrice",
+        // jotka suodattavat tuloksia käyttäjän haluamien kriteerien perusteella.
+        // Näin ollen metodi mahdollistaa joustavan tavan hakea tietokannasta puhelimia yksilöllisiin tarpeisiin sopivalla tavalla.
+        private static async Task<IResult> GetPhones([FromQuery] string? brand = null, [FromQuery] string? model = null, [FromQuery] string? condition = null, [FromQuery] decimal? maxPrice = null)
         {
-            var phones = new List<PhoneModel>(); // Lista, johon tallennetaan haetut puhelimet
+            // Alustetaan tyhjä lista, johon tallennetaan haetut puhelimet. Tämä lista palautetaan lopuksi API:n vastauksena.
+            var phones = new List<PhoneModel>();
 
             try
             {
-                // Avaa tietokantayhteys käyttämällä asynkronista yhteyden avausta
+                // Avaa yhteys SQLite-tietokantaan. Käytämme asynkronista yhteyden avaamista, jotta se ei estä muiden prosessien suoritusta.
                 using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
                 {
-                    await connection.OpenAsync(); // Avaa yhteyden tietokantaan asynkronisesti
+                    await connection.OpenAsync(); // Avaa tietokantayhteyden asynkronisesti, mikä mahdollistaa skaalautuvuuden, kun useita pyyntöjä käsitellään samanaikaisesti.
 
-                    // Luodaan komento, joka suorittaa SQL-kyselyn puhelintietojen hakemiseksi
+                    // Luodaan uusi komento, jonka kautta määritetään SQL-kysely tietokantaa varten.
                     var command = connection.CreateCommand();
-                    command.CommandText = "SELECT PhoneID, Brand, Model, Price, Description, Condition, StockQuantity FROM Phones";
 
-                    // Suorittaa kyselyn asynkronisesti ja käsittelee tuloksia readerin avulla
-                    using var reader = await command.ExecuteReaderAsync();
-                    while (await reader.ReadAsync()) // Käy läpi jokaisen tietokannasta haetun rivin
+                    // Rakennetaan SQL-kysely, joka hakee kaikki puhelimet.
+                    // "WHERE 1=1" mahdollistaa suodatusehtojen dynaamisen lisäämisen helposti, ilman että tarvitsisi huolehtia siitä, lisätäänkö WHERE vai AND.
+                    // Kaikki lisäsuodattimet voivat käyttää suoraan AND-operaattoria.
+                    var query = "SELECT PhoneID, Brand, Model, Price, Description, Condition, StockQuantity FROM Phones WHERE 1=1";
+
+                    // Tarkistetaan, onko käyttäjä antanut arvon "brand"-parametriin. Jos kyllä, lisätään kyselyyn suodatus kyseisen merkin perusteella.
+                    if (!string.IsNullOrEmpty(brand))
                     {
-                        // Lisää uusi PhoneModel-olio puhelinlistaan, täyttäen tiedot haetuista arvoista.
-                        // Huomaa: Indeksit vastaavat SQL-kyselyssä määritettyjen sarakkeiden järjestystä.
-                        // Jos muutamme kyselyn sarakkeiden järjestystä, tulee vastaavasti muuttaa indeksien paikkoja vastaamaan uutta järjestystä.
+                        query += " AND Brand = @brand"; // SQL-kyselyyn lisätään suodatusehto, jossa merkki vastaa käyttäjän syöttämää arvoa.
+                        command.Parameters.AddWithValue("@brand", brand); // Parametrien avulla vältetään SQL-injektiot.
+                    }
+
+                    // Tarkistetaan, onko käyttäjä antanut arvon "model"-parametriin. Jos kyllä, lisätään suodatus kyseisen mallin perusteella.
+                    if (!string.IsNullOrEmpty(model))
+                    {
+                        query += " AND Model = @model"; // Lisätään suodatus, joka rajaa haun tiettyyn malliin.
+                        command.Parameters.AddWithValue("@model", model); // Parametrin lisäys estää SQL-injektiohyökkäyksiä.
+                    }
+
+                    // Tarkistetaan, onko käyttäjä antanut arvon "condition"-parametriin. Jos kyllä, lisätään suodatus puhelimen kunnon mukaan.
+                    if (!string.IsNullOrEmpty(condition))
+                    {
+                        query += " AND Condition = @condition"; // Lisätään suodatus puhelimen kunnon perusteella (esim. "Uusi", "Hyvä", "Käytetty").
+                        command.Parameters.AddWithValue("@condition", condition); // Parametrin lisääminen SQL-kyselyyn.
+                    }
+
+                    // Tarkistetaan, onko käyttäjä antanut "maxPrice"-arvon. Jos kyllä, lisätään suodatus maksimiarvon perusteella.
+                    if (maxPrice.HasValue)
+                    {
+                        query += " AND Price <= @maxPrice"; // Lisätään suodatus hintakatolle, jolloin haetaan puhelimet, jotka maksavat vähemmän tai saman verran kuin annettu arvo.
+                        command.Parameters.AddWithValue("@maxPrice", maxPrice.Value); // Lisätään parametrina, joka estää SQL-injektiot.
+                    }
+
+                    // Asetetaan komennon kyselytekstiksi rakennettu kysely.
+                    command.CommandText = query;
+
+                    // Suoritetaan SQL-kysely ja käsitellään sen tulokset. Käytetään asynkronista lukijaa.
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        // Jokainen tietokannan rivi lisätään "phones"-listaan PhoneModel-oliona.
+                        // Tämä tekee tietojen käsittelystä tehokasta, sillä käytämme vahvatyyppistä oliota tietojen hallintaan.
                         phones.Add(new PhoneModel
                         {
-                            PhoneID = reader.GetInt32(0),       // Haetaan PhoneID-kentän arvo (index 0)
-                            Brand = reader.GetString(1),       // Haetaan Brand-kentän arvo (index 1)
-                            Model = reader.GetString(2),       // Haetaan Model-kentän arvo (index 2)
-                            Price = reader.GetDecimal(3),      // Haetaan Price-kentän arvo (index 3)
-                            Description = reader.GetString(4), // Haetaan Description-kentän arvo (index 4)
-                            Condition = reader.GetString(5),   // Haetaan Condition-kentän arvo (index 5)
-                            StockQuantity = reader.GetInt32(6) // Haetaan StockQuantity-kentän arvo (index 6)
+                            PhoneID = reader.GetInt32(0),       // Haetaan PhoneID (ensimmäinen sarake, index 0)
+                            Brand = reader.GetString(1),       // Haetaan Brand (toinen sarake, index 1)
+                            Model = reader.GetString(2),       // Haetaan Model (kolmas sarake, index 2)
+                            Price = reader.GetDecimal(3),      // Haetaan Price (neljäs sarake, index 3)
+                            Description = reader.GetString(4), // Haetaan Description (viides sarake, index 4)
+                            Condition = reader.GetString(5),   // Haetaan Condition (kuudes sarake, index 5)
+                            StockQuantity = reader.GetInt32(6) // Haetaan StockQuantity (seitsemäs sarake, index 6)
                         });
                     }
                 }
-                return Results.Ok(phones); // Palauttaa listan haetuista puhelimista JSON-muodossa.
+
+                // Palautetaan tulokset JSON-muodossa. Tämä mahdollistaa front-end-sovelluksen käyttävän tuloksia helposti.
+                return Results.Ok(phones);
             }
-            catch (Exception ex) // Jos virhe ilmenee, ohjataan virhe tähän kohtaan
+            catch (Exception ex)
             {
-                // Palautetaan yleinen virheviesti, jos haku epäonnistuu
+                // Jos jokin menee vikaan (esim. tietokantayhteys ei onnistu tai komennon suoritus epäonnistuu), käsitellään virhe tässä kohtaa.
+                // Palautetaan yleinen virheviesti. Tämä parantaa API:n virheensietokykyä ja auttaa kehittäjiä virhetilanteiden diagnosoinnissa.
                 return Results.Problem($"Virhe puhelinten hakemisessa: {ex.Message}");
             }
         }
+
 
         // AddPhone metodi, joka lisää uuden puhelimen tietokantaan ja palauttaa luodun puhelimen JSON-muodossa
         private static async Task<IResult> AddPhone(PhoneModel phone)
@@ -211,14 +251,17 @@ namespace Backend.Api
                         StockQuantity = reader.GetInt32(6)
                     };
 
-                    // Päivitetään vain ne kentät, jotka on annettu päivitysobjektissa
-                    // Jos päivitysarvo on null, säilytetään nykyinen arvo
-                    phone.Brand = updatedFields.Brand ?? phone.Brand;
+                    // Päivitetään puhelin-olion tiedot vain, jos updatedFields-kentät eivät ole null-arvoja
+                    // Null-coalescing-operaattori (??) tarkistaa, onko vasemmanpuoleinen arvo null.
+                    // Jos arvo on null, käytetään oikeanpuoleista arvoa, joka on nykyinen olion kenttäarvo.
+                    phone.Brand = updatedFields.Brand ?? phone.Brand; // Esim. Päivitä Brand, jos updatedFields.Brand ei ole null
                     phone.Model = updatedFields.Model ?? phone.Model;
                     phone.Price = updatedFields.Price ?? phone.Price;
                     phone.Description = updatedFields.Description ?? phone.Description;
                     phone.Condition = updatedFields.Condition ?? phone.Condition;
                     phone.StockQuantity = updatedFields.StockQuantity ?? phone.StockQuantity;
+                    // Tällä logiikalla päivitetään vain ne kentät, joihin on annettu uusi arvo (ei null).
+                    // Tämä lähestymistapa varmistaa, että olemassa olevat arvot säilyvät, jos päivitysarvo on null.
 
                     // Validointia: Tarkistetaan, että päivitetyt kentät ovat edelleen validit (esim. hinta positiivinen, varastosaldo ei negatiivinen)
                     if (phone.Price <= 0 || phone.StockQuantity < 0)
@@ -253,17 +296,5 @@ namespace Backend.Api
             }
         }
     }
-
-    // DTO-luokka, joka mahdollistaa osittaiset päivitykset
-    // Tämä luokka mahdollistaa vain tiettyjen kenttien päivittämisen puhelimen tiedoissa.
-    // Esimerkiksi, jos käyttäjä haluaa päivittää vain puhelimen hinnan, hän voi tehdä sen ilman, että muut tiedot muuttuvat.
-    public class UpdatePhoneModel
-    {
-        public string? Brand { get; set; }
-        public string? Model { get; set; }
-        public decimal? Price { get; set; }
-        public string? Description { get; set; }
-        public string? Condition { get; set; }
-        public int? StockQuantity { get; set; }
-    }
 }
+

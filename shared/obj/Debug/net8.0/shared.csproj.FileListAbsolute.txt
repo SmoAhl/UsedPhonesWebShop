@@ -9,3 +9,4 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\ne
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\refint\shared.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.pdb
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\ref\shared.dll
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.sourcelink.json
