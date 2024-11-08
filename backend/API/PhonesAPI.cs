@@ -7,6 +7,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api
 {
+    // PhonesApi-luokka määrittää API-reitit ja metodit, joiden avulla hallitaan puhelinten tietoja SQLite-tietokannassa.
+    // Luokan metodit noudattavat yhtenäistä rakennetta, jossa käytetään seuraavia käytäntöjä:
+    // - Asynkroninen suoritustapa (async) mahdollistaa ei-estävän suorituksen ja parantaa sovelluksen skaalautuvuutta.
+    // - "using"-lohkoja tietokantayhteyksien hallintaan, mikä varmistaa yhteyksien automaattisen sulkemisen suorituksen jälkeen ja ehkäisee resurssivuotoja.
+    // - Try-catch-lohkot, jotka käsittelevät mahdolliset virheet hallitusti ja palauttavat selkeät virheviestit `Results.Problem()`-metodin avulla.
+    // - Parametrien käyttö SQL-komennoissa `Parameters.AddWithValue()`-menetelmällä estää SQL-injektiohyökkäykset ja parantaa tietoturvaa.
+
+    // API-reittien määrittely sisältää seuraavat metodit:
+    // - `MapPhonesApi`: Rekisteröi API-reitit (GET, POST, DELETE, PATCH) ja linkittää ne vastaaviin metodien toteutuksiin.
+    // - `GetPhones`: Hakee puhelimet tietokannasta ja mahdollistaa suodatuksen valinnaisilla parametreilla.
+    // - `AddPhone`: Lisää uuden puhelimen tietokantaan ja palauttaa luodun puhelimen tiedot JSON-muodossa.
+    // - `DeletePhone`: Poistaa tietyn puhelimen tietokannasta ID:n perusteella.
+    // - `UpdatePhonePartial`: Päivittää osittain puhelimen tiedot annetun ID:n perusteella käyttäen DTO-luokkaa, jotta vain tarvittavat kentät päivittyvät.
+
+
     public static class PhonesApi
     {
         // Määritetään API-reitit sovelluksen käynnistyksen yhteydessä
