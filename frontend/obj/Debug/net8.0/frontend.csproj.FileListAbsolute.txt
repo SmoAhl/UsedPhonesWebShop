@@ -1038,3 +1038,9 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\vr8e71o4f7.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\gq3z8oabi4.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\cugee5s7c9.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.sourcelink.json
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Blazored.LocalStorage.dll
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Blazored.LocalStorage.wasm
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\jke3nl14jl.gz

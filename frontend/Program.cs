@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.LocalStorage;
 using frontend;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -14,6 +15,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // BaseAddress-asetuksella määritellään sovelluksen perusosoite, jota käytetään HTTP-pyyntöjen yhteydessä.
 // Tällöin URL-osoite voi olla suhteellinen, kuten "/api/auth/register" tai "/api/auth/login".
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5088") });
+
+// Rekisteröi Blazored.LocalStorage-palvelu
+builder.Services.AddBlazoredLocalStorage();
 
 // Rakentaa ja käynnistää Blazor WebAssembly -sovelluksen
 await builder.Build().RunAsync();

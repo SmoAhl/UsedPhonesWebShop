@@ -38,6 +38,7 @@
     <p>@Message</p> <!-- Näyttää viestin onnistuneesta tai epäonnistuneesta rekisteröinnistä -->
 }
 
+
 @code {
     // Käyttäjän tiedot UserModel-oliolla
     private UserModel User { get; set; } = new UserModel();
@@ -48,6 +49,9 @@
     {
         try
         {
+            // Asetetaan käyttäjän rooli "customer"
+            User.Role = "customer";
+
             // Lähetetään käyttäjän tiedot rekisteröintipäätepisteelle
             var response = await Http.PostAsJsonAsync("/api/auth/register", User);
             if (response.IsSuccessStatusCode)

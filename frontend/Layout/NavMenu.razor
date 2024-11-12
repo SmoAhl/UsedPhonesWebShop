@@ -1,50 +1,97 @@
-﻿<!-- Ylätason navigointipalkki -->
+﻿@using Microsoft.AspNetCore.Components
+@using Blazored.LocalStorage
+
+<!-- Ylätason navigointipalkki -->
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <!-- Sivuston nimi ja kotilinkki -->
         <a class="navbar-brand" href="">Used Phones Web Shop</a>
-        <!-- Navigointivalikon avaamiseen/taittamiseen tarkoitettu painike -->
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
-
 <!-- Varsinainen navigointivalikko -->
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <!-- Koti-linkki, joka vie käyttäjän etusivulle -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-
-        <!-- Linkki rekisteröitymissivulle -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/register" Match="NavLinkMatch.Prefix">
-                <span class="bi bi-person-plus-fill" aria-hidden="true"></span> Rekisteröidy
-            </NavLink>
-        </div>
-
-        <!-- Linkki kirjautumissivulle -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/login" Match="NavLinkMatch.Prefix">
-                <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Kirjaudu sisään
-            </NavLink>
-        </div>
+        @if (isUserLoggedIn)
+        {
+            <!-- Linkki uloskirjautumiseen -->
+            <div class="nav-item px-3">
+                <button class="nav-link btn btn-link text-start" @onclick="Logout">
+                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Kirjaudu ulos
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/register" Match="NavLinkMatch.Prefix">
+                    <span class="bi bi-person-plus-fill" aria-hidden="true"></span> Rekisteröidy
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/login" Match="NavLinkMatch.Prefix">
+                    <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Kirjaudu sisään
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
 @code {
-    private bool collapseNavMenu = true; // Määrittää, onko navigointivalikko taitettu
+    private bool collapseNavMenu = true;
 
-    // Palauttaa CSS-luokan valikon tila mukaan
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    // Taittaa/avaa navigointivalikon
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    private bool isUserLoggedIn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("OnInitializedAsync - checking user login status");
+        var sessionId = await GetUserSessionID();
+        isUserLoggedIn = !string.IsNullOrEmpty(sessionId);
+        Console.WriteLine($"Is user logged in: {isUserLoggedIn}");
+        StateHasChanged(); // Päivitä UI, kun tieto on saatu
+    }
+
+    private async Task<string?> GetUserSessionID()
+    {
+        return await localStorage.GetItemAsync<string>("SessionID");
+    }
+
+    private async Task Logout()
+    {
+        var response = await Http.PostAsync("/api/auth/logout", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await localStorage.RemoveItemAsync("SessionID");
+            isUserLoggedIn = false; // Päivitä kirjautumistila
+            StateHasChanged(); // Päivitä UI
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Console.WriteLine("Uloskirjautuminen epäonnistui.");
+        }
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    [Inject]
+    private ILocalStorageService localStorage { get; set; }
 }

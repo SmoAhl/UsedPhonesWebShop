@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "1o1r+EPGXGa/IyzQCO2FynJlMwZddEpN0R2vHGQ1SWg=",
+  "Hash": "BV1vancWumrpn6P7jQWoCHtGC4IMHZkEaTx9mxNxWys=",
   "Source": "frontend",
   "BasePath": "/",
   "Mode": "Root",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly\\8.0.10\\build\\net8.0\\blazor.webassembly.js"
+    },
+    {
+      "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Blazored.LocalStorage.wasm",
+      "SourceId": "frontend",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/Blazored.LocalStorage.wasm",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "WasmResource",
+      "AssetTraitValue": "runtime",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\obj\\Debug\\net8.0\\webcil\\Blazored.LocalStorage.wasm"
     },
     {
       "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\dotnet.js",
@@ -6076,6 +6095,25 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\System.Formats.Tar.wasm"
+    },
+    {
+      "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\obj\\Debug\\net8.0\\compressed\\jke3nl14jl.gz",
+      "SourceId": "frontend",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/Blazored.LocalStorage.wasm.gz",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Blazored.LocalStorage.wasm",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\bin\\Debug\\net8.0\\wwwroot\\_framework\\Blazored.LocalStorage.wasm"
     },
     {
       "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\obj\\Debug\\net8.0\\compressed\\jmd3o0b6bi.gz",

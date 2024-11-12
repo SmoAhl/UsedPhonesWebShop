@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Backend.Data;
 using Backend.Api;
-using Shared.Models;
+using Backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Lisää Session-palvelut
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Lisää Newtonsoft.Json tuki
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -48,6 +57,12 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Used Phones API V1");
     c.RoutePrefix = string.Empty; // Määrittää, että Swagger UI avautuu suoraan root-URL:ssa
 });
+
+// Käytä Sessionia
+app.UseSession();
+
+// Lisää Middleware käyttäjän autentikoinnin validointiin
+app.UseMiddleware<AuthenticationMiddleware>();
 
 // Tietokannan alustaminen asynkronisesti
 await DatabaseInitializer.Initialize();

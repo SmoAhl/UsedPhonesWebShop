@@ -1,5 +1,6 @@
 @page "/login"
 @inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using Shared.Models
 
 <h3>Kirjaudu sisään</h3>
@@ -36,7 +37,6 @@
     private async Task LoginUser()
     {
         var userCredentials = new UserModel { Email = Email, PasswordHash = Password };
-
         try
         {
             // Lähetetään kirjautumistiedot backendille
@@ -44,7 +44,8 @@
             if (response.IsSuccessStatusCode)
             {
                 User = await response.Content.ReadFromJsonAsync<UserModel>(); // Tallennetaan käyttäjän tiedot
-                Message = $"Kirjautuminen onnistui!"; // Viesti onnistuneesta kirjautumisesta
+                await localStorage.SetItemAsync("SessionID", User.SessionID); // Tallennetaan SessionID LocalStorageen
+                Message = "Kirjautuminen onnistui!"; // Viesti onnistuneesta kirjautumisesta
             }
             else
             {

@@ -33,13 +33,15 @@ namespace Backend.Data
                 createUsersTable.CommandText = @"
                     CREATE TABLE IF NOT EXISTS Users (
                         UserID INTEGER PRIMARY KEY AUTOINCREMENT, -- PK, käyttäjän yksilöllinen tunniste
-                        Email TEXT NOT NULL,                       -- Käyttäjän sähköpostiosoite
+                        Role TEXT NOT NULL,                        -- Käyttäjän rooli
+                        Email TEXT NOT NULL UNIQUE,                -- Käyttäjän sähköpostiosoite
                         PasswordHash TEXT NOT NULL,                -- Käyttäjän salasanan hash
                         FirstName TEXT NOT NULL,                   -- Käyttäjän etunimi
                         LastName TEXT NOT NULL,                    -- Käyttäjän sukunimi
                         Address TEXT,                              -- Käyttäjän osoite
                         PhoneNumber TEXT,                          -- Käyttäjän puhelinnumero
-                        CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP -- Luontipäivämäärä
+                        CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- Luontipäivämäärä
+                        SessionID TEXT                             -- Käyttäjän istunto-ID
                     )";
                 await createUsersTable.ExecuteNonQueryAsync(); // Taulun luonti asynkronisesti
 

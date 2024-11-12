@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "k3enPs3E+hQaxYLFq896Pu9qDbcu1zAWQKC6JIgPb4BgcesDGJqBex6jepn2QglPzzjU9BTGyhFt0lyUw9+EkQ==",
+  "dgSpecHash": "GQXEDBReQ2F54WeuZd22hAVMW3WFPcFj6RKOx/CQOvURzJKc9/kDd+8TTmSCpw36SpcnxDMeYTqjUlCbjz5R9A==",
   "success": true,
   "projectFilePath": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\frontend.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\simoa\\.nuget\\packages\\blazored.localstorage\\4.5.0\\blazored.localstorage.4.5.0.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.10\\microsoft.aspnetcore.authorization.8.0.10.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.10\\microsoft.aspnetcore.components.8.0.10.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\8.0.10\\microsoft.aspnetcore.components.analyzers.8.0.10.nupkg.sha512",
