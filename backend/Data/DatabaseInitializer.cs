@@ -40,8 +40,7 @@ namespace Backend.Data
                         LastName TEXT NOT NULL,                    -- Käyttäjän sukunimi
                         Address TEXT,                              -- Käyttäjän osoite
                         PhoneNumber TEXT,                          -- Käyttäjän puhelinnumero
-                        CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- Luontipäivämäärä
-                        SessionID TEXT                             -- Käyttäjän istunto-ID
+                        CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP -- Luontipäivämäärä
                     )";
                 await createUsersTable.ExecuteNonQueryAsync(); // Taulun luonti asynkronisesti
 

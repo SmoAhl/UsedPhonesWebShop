@@ -44,7 +44,6 @@
             if (response.IsSuccessStatusCode)
             {
                 User = await response.Content.ReadFromJsonAsync<UserModel>(); // Tallennetaan käyttäjän tiedot
-                await localStorage.SetItemAsync("SessionID", User.SessionID); // Tallennetaan SessionID LocalStorageen
                 Message = "Kirjautuminen onnistui!"; // Viesti onnistuneesta kirjautumisesta
             }
             else

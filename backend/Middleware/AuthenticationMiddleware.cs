@@ -22,8 +22,8 @@ namespace Backend.Middleware
             // Tarkistetaan, onko pyyntö suunnattu API-päätepisteeseen, mutta ei autentikointiin liittyviin päätepisteisiin (/api/auth)
             if (path.StartsWithSegments("/api") && !path.StartsWithSegments("/api/auth"))
             {
-                // Jos käyttäjällä ei ole istuntotietoja (UserID tai SessionID puuttuu), palautetaan 401 Unauthorized
-                if (context.Session.GetInt32("UserID") == null || context.Session.GetString("SessionID") == null)
+                // Jos käyttäjällä ei ole istuntotietoja (UserID puuttuu), palautetaan 401 Unauthorized
+                if (context.Session.GetInt32("UserID") == null)
                 {
                     // Määritetään vastauksen statuskoodiksi 401 Unauthorized
                     context.Response.StatusCode = 401; // Unauthorized

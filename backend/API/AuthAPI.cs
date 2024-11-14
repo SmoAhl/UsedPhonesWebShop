@@ -1,4 +1,3 @@
-// AuthApi.cs
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Shared.Models;
@@ -49,14 +48,11 @@ namespace Backend.Api
                     // Hashataan käyttäjän salasana turvallisuuden parantamiseksi
                     user.PasswordHash = HashPassword(user.PasswordHash);
 
-                    // Generoidaan uusi SessionID rekisteröinnin yhteydessä käyttäjän istunnon hallintaan
-                    user.SessionID = GenerateSessionID();
-
                     // Luodaan komento uuden käyttäjän lisäämiseksi tietokantaan
                     var command = connection.CreateCommand();
                     command.CommandText = @"
-                        INSERT INTO Users (Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber, CreatedDate, SessionID)
-                        VALUES (@Email, @Role, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, CURRENT_TIMESTAMP, @SessionID)";
+                        INSERT INTO Users (Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber, CreatedDate)
+                        VALUES (@Email, @Role, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, CURRENT_TIMESTAMP)";
                     command.Parameters.AddWithValue("@Email", user.Email);
                     command.Parameters.AddWithValue("@Role", user.Role);
                     command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
@@ -64,7 +60,6 @@ namespace Backend.Api
                     command.Parameters.AddWithValue("@LastName", user.LastName);
                     command.Parameters.AddWithValue("@Address", user.Address);
                     command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-                    command.Parameters.AddWithValue("@SessionID", user.SessionID); // Tallennetaan käyttäjän istunto-ID tietokantaan
 
                     await command.ExecuteNonQueryAsync(); // Suoritetaan SQL-komento tietokantaan
                 }
@@ -87,7 +82,7 @@ namespace Backend.Api
                     await connection.OpenAsync(); // Avaa tietokantayhteys asynkronisesti
 
                     var command = connection.CreateCommand();
-                    command.CommandText = "SELECT UserID, PasswordHash, Role, SessionID FROM Users WHERE Email = @Email";
+                    command.CommandText = "SELECT UserID, PasswordHash, Role FROM Users WHERE Email = @Email";
                     command.Parameters.AddWithValue("@Email", user.Email); // Lisätään käyttäjän sähköposti parametriin
                     using (var reader = await command.ExecuteReaderAsync())
                     {
@@ -102,17 +97,10 @@ namespace Backend.Api
                         }
                         var userId = reader.GetInt32(0); // Haetaan käyttäjän UserID
                         var role = reader.GetString(2); // Haetaan käyttäjän rooli
-                        var sessionId = reader.GetString(3); // Haetaan käyttäjän SessionID
 
                         // Asetetaan sessio, jotta käyttäjän kirjautumistila voidaan ylläpitää eri sivujen välillä
                         context.Session.SetInt32("UserID", userId); // Tallennetaan käyttäjän ID istuntotietoihin
                         context.Session.SetString("Role", role); // Tallennetaan käyttäjän rooli istuntoon
-                        context.Session.SetString("SessionID", sessionId); // Tallennetaan SessionID istuntoon
-                        context.Response.Cookies.Append("SessionID", sessionId, new CookieOptions
-                        {
-                            HttpOnly = true,
-                            IsEssential = true
-                        });
 
                         return Results.Ok(new { Message = "Kirjautuminen onnistui." }); // Palautetaan onnistumisviesti kirjautumisen onnistuessa
                     }
@@ -153,12 +141,5 @@ namespace Backend.Api
             return enteredHash == storedHash; // Palautetaan true, jos hashit täsmäävät
         }
 
-        // SessionID:n generointimetodi käyttäjän istuntoa varten
-        private static string GenerateSessionID()
-        {
-            var data = new byte[32]; // Määritetään tavutaulukon koko
-            RandomNumberGenerator.Fill(data); // Täytetään taulukko satunnaisilla arvoilla
-            return Convert.ToBase64String(data); // Muutetaan satunnaisarvot Base64-merkkijonoksi ja palaut
-        }
     }
 }

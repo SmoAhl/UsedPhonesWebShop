@@ -5,19 +5,19 @@ using frontend;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-// Lisää sovelluksen pääkomponentti App. Tämä komponentti renderöidään HTML-sivulle kohteessa, jossa on id="app".
+// Add the main application component App. This component is rendered to the HTML element with id="app".
 builder.RootComponents.Add<App>("#app");
 
-// Lisää HeadOutlet-komponentti <head>-elementtiin. Tämä mahdollistaa Blazor-sovelluksen dynaamisen sisältöjen lisäyksen head-osaan.
+// Add the HeadOutlet component to the <head> element. This allows dynamic content addition to the head section of the Blazor app.
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Lisää HttpClient-palvelu, jotta sovellus voi tehdä HTTP-pyyntöjä backendille.
-// BaseAddress-asetuksella määritellään sovelluksen perusosoite, jota käytetään HTTP-pyyntöjen yhteydessä.
-// Tällöin URL-osoite voi olla suhteellinen, kuten "/api/auth/register" tai "/api/auth/login".
+// Add HttpClient service to enable the application to make HTTP requests to the backend.
+// The BaseAddress setting defines the base URL used for HTTP requests.
+// This allows relative URLs like "/api/auth/register" or "/api/auth/login".
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5088") });
 
-// Rekisteröi Blazored.LocalStorage-palvelu
+// Register Blazored.LocalStorage service
 builder.Services.AddBlazoredLocalStorage();
 
-// Rakentaa ja käynnistää Blazor WebAssembly -sovelluksen
+// Build and run the Blazor WebAssembly application
 await builder.Build().RunAsync();

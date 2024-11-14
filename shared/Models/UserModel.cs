@@ -3,7 +3,6 @@ namespace Shared.Models
     public class UserModel
     {
         public int UserID { get; set; } // PK - Primary Key, käyttäjän yksilöllinen tunniste
-        public string SessionID { get; set; } // Käyttäjän istunnon yksilöllinen tunniste, käytetään käyttäjän istunnon hallintaan ja seurantaan
         public string Role { get; set; } // Käyttäjän rooli (esim. admin, user)
         public string Email { get; set; }
         public string PasswordHash { get; set; }

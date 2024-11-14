@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components
 @using Blazored.LocalStorage
 
 <!-- Ylätason navigointipalkki -->
@@ -58,15 +58,9 @@
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("OnInitializedAsync - checking user login status");
-        var sessionId = await GetUserSessionID();
-        isUserLoggedIn = !string.IsNullOrEmpty(sessionId);
+        isUserLoggedIn = false; // Set default value
         Console.WriteLine($"Is user logged in: {isUserLoggedIn}");
         StateHasChanged(); // Päivitä UI, kun tieto on saatu
-    }
-
-    private async Task<string?> GetUserSessionID()
-    {
-        return await localStorage.GetItemAsync<string>("SessionID");
     }
 
     private async Task Logout()
@@ -75,7 +69,6 @@
 
         if (response.IsSuccessStatusCode)
         {
-            await localStorage.RemoveItemAsync("SessionID");
             isUserLoggedIn = false; // Päivitä kirjautumistila
             StateHasChanged(); // Päivitä UI
             NavigationManager.NavigateTo("/");

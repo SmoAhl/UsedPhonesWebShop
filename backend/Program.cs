@@ -27,14 +27,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Lisää Session-palvelut
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
+// Remove session services
+// builder.Services.AddDistributedMemoryCache();
+// builder.Services.AddSession(options =>
+// {
+//     options.IdleTimeout = TimeSpan.FromMinutes(30);
+//     options.Cookie.HttpOnly = true;
+//     options.Cookie.IsEssential = true;
+// });
 
 // Lisää Newtonsoft.Json tuki
 builder.Services.AddControllers()
@@ -58,8 +58,8 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty; // Määrittää, että Swagger UI avautuu suoraan root-URL:ssa
 });
 
-// Käytä Sessionia
-app.UseSession();
+// Remove session middleware
+// app.UseSession();
 
 // Lisää Middleware käyttäjän autentikoinnin validointiin
 app.UseMiddleware<AuthenticationMiddleware>();
