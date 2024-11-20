@@ -26,12 +26,20 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/simoa/OneDrive/Documents/GITREPOS/UsedPhonesWebShop/frontend/Pages/BrowsePhones.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQnJvd3NlUGhvbmVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/simoa/OneDrive/Documents/GITREPOS/UsedPhonesWebShop/frontend/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/simoa/OneDrive/Documents/GITREPOS/UsedPhonesWebShop/frontend/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/simoa/OneDrive/Documents/GITREPOS/UsedPhonesWebShop/frontend/Pages/ManageAccount.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlQWNjb3VudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/simoa/OneDrive/Documents/GITREPOS/UsedPhonesWebShop/frontend/Pages/Register.razor]

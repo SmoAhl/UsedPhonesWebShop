@@ -1,5 +1,6 @@
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\blazor.boot.json
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\blazor.webassembly.js
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\dotnet.js
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\dotnet.js.map
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\dotnet.native.8.0.3.uqn0khwu2p.js
@@ -40,6 +41,8 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Win32.Registry.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\mscorlib.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\netstandard.wasm
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.pdb
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.AppContext.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Buffers.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Collections.Concurrent.wasm
@@ -274,6 +277,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Threading.Timer.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.IO.Pipes.AccessControl.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Extensions.Configuration.wasm.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.pdb.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Diagnostics.StackTrace.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Net.Mail.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Net.WebSockets.Client.wasm.gz
@@ -294,6 +298,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Xml.XPath.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Reflection.Emit.ILGeneration.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Security.Cryptography.Encoding.wasm.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.AppContext.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Collections.NonGeneric.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Text.RegularExpressions.wasm.gz
@@ -313,6 +318,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.AspNetCore.Metadata.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Resources.Writer.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Formats.Tar.wasm.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Win32.Registry.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Buffers.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\netstandard.wasm.gz
@@ -372,7 +378,6 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\WindowsBase.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Threading.Thread.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Private.Xml.wasm.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\blazor.webassembly.js.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Extensions.FileProviders.Abstractions.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Private.DataContractSerialization.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\dotnet.native.8.0.3.uqn0khwu2p.js.gz
@@ -385,6 +390,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Extensions.DependencyInjection.Abstractions.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.Extensions.FileSystemGlobbing.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Runtime.Serialization.Formatters.wasm.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\blazor.webassembly.js.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.ComponentModel.TypeConverter.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\System.Xml.XDocument.wasm.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Microsoft.JSInterop.wasm.gz
@@ -409,6 +415,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\frontend.staticwebassets.runtime.json
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\frontend.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\frontend.pdb
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Blazored.LocalStorage.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Microsoft.AspNetCore.Authorization.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Microsoft.AspNetCore.Components.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Microsoft.AspNetCore.Components.Forms.dll
@@ -609,12 +616,16 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\icudt_CJK.dat
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\icudt_EFIGS.dat
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\icudt_no_CJK.dat
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\shared.dll
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\shared.pdb
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.csproj.AssemblyReference.cache
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.AssemblyInfoInputs.cache
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.AssemblyInfo.cs
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.csproj.CoreCompileInputs.cache
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.sourcelink.json
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Blazored.LocalStorage.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Authorization.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Components.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Microsoft.AspNetCore.Components.Forms.wasm
@@ -806,6 +817,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\mscorlib.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\netstandard.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\System.Private.CoreLib.wasm
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\shared.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\frontend.wasm
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\blazor.build.boot-extension.json
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\blazor.boot.json
@@ -820,6 +832,8 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\scopedcss\Layout\NavMenu.razor.rz.scp.css
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\scopedcss\bundle\frontend.styles.css
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\scopedcss\projectbundle\frontend.bundle.scp.css
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\vr8e71o4f7.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\jke3nl14jl.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\055nlykxm5.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\ohmmkp6pn1.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\mywyk9gdik.gz
@@ -1020,6 +1034,8 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\6dpuda3muz.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\451dq265xc.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\5jelhiyxme.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\gq3z8oabi4.gz
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\cugee5s7c9.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\hxw59dv33s.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\gadvufdx4f.gz
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\fveyapdap7.gz
@@ -1028,19 +1044,3 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\refint\frontend.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.pdb
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\ref\frontend.dll
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.pdb
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.wasm
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.pdb.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\shared.wasm.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\shared.dll
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\shared.pdb
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\shared.wasm
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\vr8e71o4f7.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\gq3z8oabi4.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\cugee5s7c9.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\frontend.sourcelink.json
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\wwwroot\_framework\Blazored.LocalStorage.wasm.gz
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\bin\Debug\net8.0\Blazored.LocalStorage.dll
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\webcil\Blazored.LocalStorage.wasm
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\frontend\obj\Debug\net8.0\compressed\jke3nl14jl.gz

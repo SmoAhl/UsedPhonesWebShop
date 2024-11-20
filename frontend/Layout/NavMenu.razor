@@ -14,8 +14,13 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/browse-phones" Match="NavLinkMatch.Prefix">
+                <span class="bi bi-phone" aria-hidden="true"></span> Tuotteet
             </NavLink>
         </div>
         @if (isUserLoggedIn)
@@ -40,6 +45,11 @@
                 </NavLink>
             </div>
         }
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/manage-account" Match="NavLinkMatch.Prefix">
+                <span class="bi bi-gear-fill" aria-hidden="true"></span> Käyttäjätilien Hallinta
+            </NavLink>
+        </div>
     </nav>
 </div>
 
@@ -57,9 +67,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("OnInitializedAsync - checking user login status");
-        isUserLoggedIn = false; // Set default value
-        Console.WriteLine($"Is user logged in: {isUserLoggedIn}");
+        var token = await localStorage.GetItemAsync<string>("authToken");
+        isUserLoggedIn = !string.IsNullOrEmpty(token); // Check if the user is logged in
         StateHasChanged(); // Päivitä UI, kun tieto on saatu
     }
 

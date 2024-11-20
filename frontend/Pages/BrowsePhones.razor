@@ -1,0 +1,39 @@
+@page "/browse-phones"
+@inject HttpClient Http
+@using Shared.Models
+@using System.Net.Http.Json
+
+<h3>Browse Phones</h3>
+
+@if (phones == null)
+{
+    <p>Loading...</p>
+}
+else if (!phones.Any())
+{
+    <p>No phones available.</p>
+}
+else
+{
+    <ul>
+        @foreach (var phone in phones)
+        {
+            <li>
+                <strong>@phone.Brand @phone.Model</strong><br />
+                Price: @phone.Price<br />
+                Description: @phone.Description<br />
+                Condition: @phone.Condition<br />
+                Stock: @phone.StockQuantity
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<PhoneModel> phones;
+
+    protected override async Task OnInitializedAsync()
+    {
+        phones = await Http.GetFromJsonAsync<List<PhoneModel>>("/api/phones");
+    }
+}

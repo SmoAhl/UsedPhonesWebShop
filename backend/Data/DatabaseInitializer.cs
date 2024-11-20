@@ -1,4 +1,6 @@
 using Microsoft.Data.Sqlite;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Backend.Data
 {
@@ -93,9 +95,70 @@ namespace Backend.Data
                         FOREIGN KEY (PhoneID) REFERENCES Phones(PhoneID)      -- Määrittää, että PhoneID viittaa Phones-tauluun
                     )";
                 await createCartItemsTable.ExecuteNonQueryAsync(); // Taulun luonti asynkronisesti
+
+                // Siemenalustetaan Admin-käyttäjä ja puhelimet
+                await SeedData(connection);
+                await SeedPhones(connection);
             }
             // Tähän päättyessä using-lohko sulkee automaattisesti tietokantayhteyden
             // Tämä tapahtuu kutsumalla SqliteConnection-olion Dispose-metodia
+        }
+
+        // Tämä metodi lisää Admin-käyttäjän, jos sitä ei ole vielä olemassa
+        private static async Task SeedData(SqliteConnection connection)
+        {
+            var checkAdminCommand = connection.CreateCommand();
+            checkAdminCommand.CommandText = "SELECT COUNT(*) FROM Users WHERE Email = 'admin@usedphoneshop.com'";
+            var adminExists = (long)await checkAdminCommand.ExecuteScalarAsync() > 0;
+
+            if (!adminExists)
+            {
+                var insertAdminCommand = connection.CreateCommand();
+
+                // Luodaan salasana ja hash
+                string adminPassword = "Admin123!";
+                string passwordHash = HashPassword(adminPassword);
+
+                insertAdminCommand.CommandText = @"
+                    INSERT INTO Users (Role, Email, PasswordHash, FirstName, LastName, Address, PhoneNumber)
+                    VALUES ('Admin', 'admin@usedphoneshop.com', @PasswordHash, 'Admin', 'User', '123 Admin Street', '123456789')";
+                insertAdminCommand.Parameters.AddWithValue("@PasswordHash", passwordHash);
+
+                await insertAdminCommand.ExecuteNonQueryAsync();
+                Console.WriteLine("Admin käyttäjä lisätty: admin@usedphoneshop.com");
+            }
+        }
+
+        // Tämä metodi luo hashatun salasanan
+        private static string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
+        // Tämä metodi lisää esimerkkipuhelimet, jos niitä ei ole vielä olemassa
+        private static async Task SeedPhones(SqliteConnection connection)
+        {
+            var checkPhonesCommand = connection.CreateCommand();
+            checkPhonesCommand.CommandText = "SELECT COUNT(*) FROM Phones";
+            var phonesExist = (long)await checkPhonesCommand.ExecuteScalarAsync() > 0;
+
+            if (!phonesExist)
+            {
+                var insertPhonesCommand = connection.CreateCommand();
+                insertPhonesCommand.CommandText = @"
+                    INSERT INTO Phones (Brand, Model, Price, Description, Condition, StockQuantity) VALUES
+                    ('Apple', 'iPhone 12', 799.99, 'Latest model with A14 Bionic chip', 'New', 10),
+                    ('Samsung', 'Galaxy S21', 699.99, 'Flagship model with Exynos 2100', 'New', 15),
+                    ('Google', 'Pixel 5', 599.99, '5G capable with Snapdragon 765G', 'New', 8),
+                    ('OnePlus', '8T', 499.99, 'Fast and smooth with Snapdragon 865', 'New', 12),
+                    ('Sony', 'Xperia 5 II', 649.99, 'Compact flagship with Snapdragon 865', 'New', 5)";
+                await insertPhonesCommand.ExecuteNonQueryAsync();
+                Console.WriteLine("Esimerkkipuhelimet lisätty tietokantaan.");
+            }
         }
     }
 }

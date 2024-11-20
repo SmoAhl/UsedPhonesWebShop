@@ -1,0 +1,47 @@
+@page "/manage-account"
+@inject HttpClient Http
+@using Shared.Models
+@using System.Net.Http.Json
+
+<h3>Käyttäjätilien Hallinta</h3>
+
+@code {
+    private List<UserModel> users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        try
+        {
+            users = await Http.GetFromJsonAsync<List<UserModel>>("/api/auth/users");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Virhe käyttäjien lataamisessa: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteUser(int userId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/auth/users/{userId}");
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadUsers();
+            }
+            else
+            {
+                Console.WriteLine("Käyttäjän poistaminen epäonnistui.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Virhe käyttäjän poistamisessa: {ex.Message}");
+        }
+    }
+}

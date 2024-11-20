@@ -1,6 +1,5 @@
 @page "/login"
 @inject HttpClient Http
-@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using Shared.Models
 
 <h3>Kirjaudu sisään</h3>
@@ -19,32 +18,23 @@
 
 @if (!string.IsNullOrEmpty(Message))
 {
-    <p>@Message</p> <!-- Näyttää viestin onnistuneesta tai epäonnistuneesta kirjautumisesta -->
-}
-
-@if (User != null)
-{
-    <h4>Tervetuloa, @User.FirstName @User.LastName!</h4> <!-- Näyttää käyttäjän koko nimen -->
+    <p>@Message</p>
 }
 
 @code {
-    private string Email { get; set; } = string.Empty; // Sähköpostiosoite
-    private string Password { get; set; } = string.Empty; // Salasana
-    private string Message { get; set; } = string.Empty; // Viesti käyttäjälle kirjautumisen tuloksesta
-    private UserModel? User { get; set; } // Tallennetaan kirjautuneen käyttäjän tiedot
+    private string Email { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string Message { get; set; } = string.Empty;
 
-    // Metodi, joka lähettää kirjautumistiedot backendille ja hakee käyttäjän tiedot
     private async Task LoginUser()
     {
         var userCredentials = new UserModel { Email = Email, PasswordHash = Password };
         try
         {
-            // Lähetetään kirjautumistiedot backendille
             var response = await Http.PostAsJsonAsync("/api/auth/login", userCredentials);
             if (response.IsSuccessStatusCode)
             {
-                User = await response.Content.ReadFromJsonAsync<UserModel>(); // Tallennetaan käyttäjän tiedot
-                Message = "Kirjautuminen onnistui!"; // Viesti onnistuneesta kirjautumisesta
+                Message = "Kirjautuminen onnistui!";
             }
             else
             {
@@ -53,7 +43,7 @@
         }
         catch (Exception ex)
         {
-            Message = $"Virhe kirjautuessa: {ex.Message}"; // Virheviesti, jos pyyntö epäonnistuu
+            Message = $"Virhe kirjautuessa: {ex.Message}";
         }
     }
 }

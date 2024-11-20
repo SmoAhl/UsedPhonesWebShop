@@ -3,75 +3,65 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Backend.Data;
 using Backend.Api;
-using Backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Swagger-dokumentaatio
-// Lisätään Swagger-tuki, joka mahdollistaa API-dokumentaation luomisen
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Used Phones API", Version = "v1" });
-});
-
-// Lisää CORS-käytäntö, joka sallii kaikki originit, metodit ja otsikot
-// (Voit myöhemmin rajoittaa tämän tiettyihin arvoihin tietoturvan parantamiseksi.)
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowBlazorClient", policy =>
-    {
-        policy.WithOrigins("http://localhost:5058") // Salli pyynnöt Blazor-frontendistä
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
-// Remove session services
-// builder.Services.AddDistributedMemoryCache();
-// builder.Services.AddSession(options =>
-// {
-//     options.IdleTimeout = TimeSpan.FromMinutes(30);
-//     options.Cookie.HttpOnly = true;
-//     options.Cookie.IsEssential = true;
-// });
-
-// Lisää Newtonsoft.Json tuki
+// Add services to the container.
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
         options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
     });
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient", builder =>
+    {
+        builder.WithOrigins("http://localhost:5058") // Adjust the origin to match your frontend URL
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
+// Add Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Used Phones API", Version = "v1" });
+
+    // Ensure APIs are accessible in Swagger
+    c.SwaggerDoc("accountmanagerapi", new OpenApiInfo { Title = "Account Manager API", Version = "v1" });
+    c.SwaggerDoc("loginapi", new OpenApiInfo { Title = "Login API", Version = "v1" });
+    c.SwaggerDoc("phonesapi", new OpenApiInfo { Title = "Phones API", Version = "v1" });
+});
+
 var app = builder.Build();
+
+// Tietokannan alustaminen asynkronisesti
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    DatabaseInitializer.Initialize().GetAwaiter().GetResult();
+}
 
 // Käytä CORS-käytäntöä ennen API-reittien rekisteröintiä
 app.UseCors("AllowBlazorClient");
 
 // Swagger-käyttöliittymä
-// Käytetään Swaggerin käyttöliittymää, jotta API-päätepisteet ovat helppokäyttöisiä ja testattavissa selaimessa
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    // Määritellään Swagger-dokumentaation sijainti ja URL-reitti
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Used Phones API V1");
-    c.RoutePrefix = string.Empty; // Määrittää, että Swagger UI avautuu suoraan root-URL:ssa
+    c.SwaggerEndpoint("/swagger/accountmanagerapi/swagger.json", "Account Manager API V1");
+    c.SwaggerEndpoint("/swagger/loginapi/swagger.json", "Login API V1");
+    c.SwaggerEndpoint("/swagger/phonesapi/swagger.json", "Phones API V1");
+    c.RoutePrefix = string.Empty;
 });
 
-// Remove session middleware
-// app.UseSession();
-
-// Lisää Middleware käyttäjän autentikoinnin validointiin
-app.UseMiddleware<AuthenticationMiddleware>();
-
-// Tietokannan alustaminen asynkronisesti
-await DatabaseInitializer.Initialize();
-
-// Rekisteröi Phones API -päätepisteet
+// Map API endpoints
+app.MapLoginApi();
+app.MapAccountManagerApi();
 app.MapPhonesApi();
 
-// Rekisteröidään AuthApi-päätepisteet
-app.MapAuthApi(); // Rekisteröidään rekisteröinti- ja kirjautumispäätepisteet sovellukseen
-
-// Käynnistetään sovellus
 app.Run();

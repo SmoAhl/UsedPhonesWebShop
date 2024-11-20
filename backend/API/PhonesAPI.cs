@@ -24,7 +24,9 @@ namespace Backend.Api
 
     public static class PhonesApi
     {
-        // Määritetään API-reitit sovelluksen käynnistyksen yhteydessä
+        /// <summary>
+        /// Maps the Phones API endpoints.
+        /// </summary>
         public static void MapPhonesApi(this WebApplication app)
         {
             // Määrittää GET-pyynnön reitille /api/phones, joka palauttaa kaikki puhelimet tietokannasta JSON-muodossa
@@ -42,10 +44,14 @@ namespace Backend.Api
             //PATCH: Osittainen päivitys. Päivittää vain tietyt resurssin osat.
         }
 
-        // GetPhones metodi, joka hakee puhelimia tietokannasta ja mahdollistaa suodatuksen valinnaisilla parametreilla
-        // Tämä metodi hyödyntää valinnaisia kyselyparametreja, kuten "brand", "model", "condition" ja "maxPrice",
-        // jotka suodattavat tuloksia käyttäjän haluamien kriteerien perusteella.
-        // Näin ollen metodi mahdollistaa joustavan tavan hakea tietokannasta puhelimia yksilöllisiin tarpeisiin sopivalla tavalla.
+        /// <summary>
+        /// Gets the list of phones.
+        /// </summary>
+        /// <param name="brand">The brand of the phone.</param>
+        /// <param name="model">The model of the phone.</param>
+        /// <param name="condition">The condition of the phone.</param>
+        /// <param name="maxPrice">The maximum price of the phone.</param>
+        /// <returns>The list of phones.</returns>
         private static async Task<IResult> GetPhones([FromQuery] string? brand = null, [FromQuery] string? model = null, [FromQuery] string? condition = null, [FromQuery] decimal? maxPrice = null)
         {
             // Alustetaan tyhjä lista, johon tallennetaan haetut puhelimet. Tämä lista palautetaan lopuksi API:n vastauksena.
@@ -128,7 +134,11 @@ namespace Backend.Api
         }
 
 
-        // AddPhone metodi, joka lisää uuden puhelimen tietokantaan ja palauttaa luodun puhelimen JSON-muodossa
+        /// <summary>
+        /// Adds a new phone.
+        /// </summary>
+        /// <param name="phone">The phone model.</param>
+        /// <returns>The created phone.</returns>
         private static async Task<IResult> AddPhone(PhoneModel phone)
         {
             // Tarkistetaan, että puhelimen pakolliset kentät on täytetty ja hinta on suurempi kuin 0
@@ -182,7 +192,11 @@ namespace Backend.Api
             }
         }
 
-        // Metodi, joka poistaa puhelimen tietokannasta annettuun id:hen perustuen
+        /// <summary>
+        /// Deletes a phone by ID.
+        /// </summary>
+        /// <param name="id">The ID of the phone.</param>
+        /// <returns>The result of the deletion.</returns>
         private static async Task<IResult> DeletePhone(int id)
         {
             // Tarkistetaan että syötetty ID ei ole negatiivinen luku.
@@ -224,10 +238,12 @@ namespace Backend.Api
             }
         }
 
-        // UpdatePhonePartial metodi, joka päivittää osittain puhelimen tiedot annetun ID:n perusteella
-        // Tämä metodi käyttää DTO-luokkaa nimeltä UpdatePhoneModel puhelimen tietojen osittaiseen päivittämiseen.
-        // DTO-luokka mahdollistaa päivitysten rajaamisen vain tiettyihin kenttiin.
-        // Käyttäjä voi esimerkiksi päivittää vain hinnan ja kuvauksen ilman, että muut tiedot muuttuvat.
+        /// <summary>
+        /// Partially updates a phone by ID.
+        /// </summary>
+        /// <param name="id">The ID of the phone.</param>
+        /// <param name="updatedFields">The fields to update.</param>
+        /// <returns>The updated phone.</returns>
         private static async Task<IResult> UpdatePhonePartial(int id, [FromBody] UpdatePhoneModel updatedFields)
         {
             // Tarkistetaan ensin, että päivitysobjekti ei ole null
