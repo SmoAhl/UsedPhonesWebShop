@@ -1,5 +1,5 @@
 Tämän hetkiset toiminnot:
 
-Frontend: Rekisteröityminen ja kirjautuminen
+Frontend: Rekisteröityminen/kirjautuminen (kirjautuminen ei pysy päällä), Tuotteiden selaus ja käyttäjätilien hallinta.
 
-Backend (Swagger): Rekisteröityminen ja kirjautuminen. Puhelimen haku, lisääminen, poistaminen ja muokkaaminen.
+Backend (Swagger): Rekisteröityminen/kirjautuminen (kirjautuminen pysyy yllä ja logout toimii), tuotteiden selaus ja käyttäjätilien hallinta.
