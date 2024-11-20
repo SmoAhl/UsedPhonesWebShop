@@ -25,6 +25,10 @@
       "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
     },
     {
+      "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
       "Id": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
     },

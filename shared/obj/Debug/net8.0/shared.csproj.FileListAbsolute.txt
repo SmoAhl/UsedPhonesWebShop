@@ -1,6 +1,3 @@
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.deps.json
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.dll
-C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.pdb
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.csproj.AssemblyReference.cache
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.AssemblyInfoInputs.cache
@@ -10,4 +7,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\ne
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\refint\shared.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\shared.pdb
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.deps.json
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.dll
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\bin\Debug\net8.0\shared.pdb
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\shared\obj\Debug\net8.0\ref\shared.dll

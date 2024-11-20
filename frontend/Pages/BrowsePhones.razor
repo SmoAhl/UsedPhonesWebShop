@@ -1,39 +1,256 @@
 @page "/browse-phones"
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 @using Shared.Models
 @using System.Net.Http.Json
 
 <h3>Browse Phones</h3>
 
-@if (phones == null)
+<div>
+    <input type="text" @bind="searchTerm" placeholder="Search by brand or model" />
+    <select @bind="selectedCondition">
+        <option value="">All Conditions</option>
+        <option value="New">New</option>
+        <option value="Used">Used</option>
+    </select>
+    <input type="number" @bind="minPrice" placeholder="Min Price" />
+    <input type="number" @bind="maxPrice" placeholder="Max Price" />
+    <button @onclick="ApplyFilters">Apply Filters</button>
+</div>
+
+<div>
+    @if (errorMessage != null)
+    {
+        <p style="color:red">@errorMessage</p>
+    }
+</div>
+
+@if (isEditing)
 {
-    <p>Loading...</p>
-}
-else if (!phones.Any())
-{
-    <p>No phones available.</p>
-}
-else
-{
-    <ul>
-        @foreach (var phone in phones)
-        {
-            <li>
-                <strong>@phone.Brand @phone.Model</strong><br />
-                Price: @phone.Price<br />
-                Description: @phone.Description<br />
-                Condition: @phone.Condition<br />
-                Stock: @phone.StockQuantity
-            </li>
-        }
-    </ul>
+    <EditForm Model="editingPhone" OnValidSubmit="UpdatePhone">
+        <div>
+            <label>Brand:</label>
+            <InputText @bind-Value="editingPhone.Brand" />
+        </div>
+        <div>
+            <label>Model:</label>
+            <InputText @bind-Value="editingPhone.Model" />
+        </div>
+        <div>
+            <label>Price:</label>
+            <InputNumber @bind-Value="editingPhone.Price" />
+        </div>
+        <div>
+            <label>Condition:</label>
+            <InputText @bind-Value="editingPhone.Condition" />
+        </div>
+        <div>
+            <label>Stock Quantity:</label>
+            <InputNumber @bind-Value="editingPhone.StockQuantity" />
+        </div>
+        <button type="submit">Update</button>
+        <button type="button" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
 }
 
+<table>
+    <thead>
+        <tr>
+            <th @onclick="@(() => SortBy("Brand"))">Brand</th>
+            <th @onclick="@(() => SortBy("Model"))">Model</th>
+            <th @onclick="@(() => SortBy("Price"))">Price</th>
+            <th>Condition</th>
+            <th>Stock Quantity</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var phone in filteredPhones)
+        {
+            <tr>
+                <td>@phone.Brand</td>
+                <td>@phone.Model</td>
+                <td>@phone.Price</td>
+                <td>@phone.Condition</td>
+                <td>@phone.StockQuantity</td>
+                <td>
+                    <button @onclick="() => ViewDetails(phone.PhoneID, phone.Description)">View Details</button>
+                    <button @onclick="() => AddToCart(phone.PhoneID)">Add to Cart</button>
+                    <button @onclick="() => DeletePhone(phone.PhoneID)">Delete</button>
+                    <button @onclick="() => EditPhone(phone)">Edit</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <button @onclick="PreviousPage" disabled="@(!hasPreviousPage)">Previous</button>
+    <button @onclick="NextPage" disabled="@(!hasNextPage)">Next</button>
+</div>
+
+<div class="modal" style="display:@(showModal ? "block" : "none")">
+    <div class="modal-content">
+        <span class="close" @onclick="CloseModal">&times;</span>
+        <p>@modalDescription</p>
+    </div>
+</div>
+
 @code {
-    private List<PhoneModel> phones;
+    private List<PhoneModel> phones = new();
+    private List<PhoneModel> filteredPhones = new();
+    private string searchTerm = string.Empty;
+    private string selectedCondition = string.Empty;
+    private decimal? minPrice;
+    private decimal? maxPrice;
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private bool hasPreviousPage => currentPage > 1;
+    private bool hasNextPage => currentPage * pageSize < filteredPhones.Count;
+    private string? errorMessage;
+    private bool showModal = false;
+    private string modalDescription = string.Empty;
+    private PhoneModel editingPhone = new();
+    private bool isEditing = false;
 
     protected override async Task OnInitializedAsync()
     {
-        phones = await Http.GetFromJsonAsync<List<PhoneModel>>("/api/phones");
+        await LoadPhones();
+    }
+
+    private async Task LoadPhones()
+    {
+        try
+        {
+            phones = await Http.GetFromJsonAsync<List<PhoneModel>>("/api/phones");
+            ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading phones: {ex.Message}";
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        filteredPhones = phones
+        .Where(p => (string.IsNullOrEmpty(searchTerm) || p.Brand.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+        p.Model.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        && (string.IsNullOrEmpty(selectedCondition) || p.Condition == selectedCondition)
+        && (!minPrice.HasValue || p.Price >= minPrice.Value)
+        && (!maxPrice.HasValue || p.Price <= maxPrice.Value))
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
+    }
+
+    private void SortBy(string column)
+    {
+        switch (column)
+        {
+            case "Brand":
+                filteredPhones = filteredPhones.OrderBy(p => p.Brand).ToList();
+                break;
+            case "Model":
+                filteredPhones = filteredPhones.OrderBy(p => p.Model).ToList();
+                break;
+            case "Price":
+                filteredPhones = filteredPhones.OrderBy(p => p.Price).ToList();
+                break;
+            case "StockQuantity":
+                filteredPhones = filteredPhones.OrderBy(p => p.StockQuantity).ToList();
+                break;
+        }
+    }
+
+    private void ViewDetails(int phoneId, string description)
+    {
+        modalDescription = description;
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    private void AddToCart(int phoneId)
+    {
+        // Add phone to cart logic
+    }
+
+    private async Task DeletePhone(int phoneId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/phones/{phoneId}");
+            if (response.IsSuccessStatusCode)
+            {
+                phones = phones.Where(p => p.PhoneID != phoneId).ToList();
+                ApplyFilters();
+            }
+            else
+            {
+                errorMessage = "Error deleting phone.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error deleting phone: {ex.Message}";
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (hasPreviousPage)
+        {
+            currentPage--;
+            ApplyFilters();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (hasNextPage)
+        {
+            currentPage++;
+            ApplyFilters();
+        }
+    }
+
+    private void EditPhone(PhoneModel phone)
+    {
+        editingPhone = phone;
+        isEditing = true;
+    }
+
+    private async Task UpdatePhone()
+    {
+        try
+        {
+            var response = await Http.PatchAsJsonAsync($"/api/phones/{editingPhone.PhoneID}", editingPhone);
+            if (response.IsSuccessStatusCode)
+            {
+                isEditing = false;
+                await LoadPhones();
+            }
+            else
+            {
+                errorMessage = "Error updating phone.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating phone: {ex.Message}";
+        }
+        finally
+        {
+            isEditing = false; // Hide the editing fields
+        }
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false; // Hide the editing fields
     }
 }

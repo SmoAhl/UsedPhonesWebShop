@@ -18,7 +18,7 @@ namespace Backend.Api
             app.MapPost("/api/auth/register", RegisterUser);
             app.MapGet("/api/auth/users", GetAllUsers);
             app.MapDelete("/api/auth/users/{id}", DeleteUser);
-            app.MapPost("/api/auth/updateuser/{id}", UpdateUser);
+            app.MapPut("/api/auth/updateuser/{id}", UpdateUser);
         }
 
         /// <summary>
@@ -120,6 +120,11 @@ namespace Backend.Api
         /// <returns>The update result.</returns>
         public static async Task<IResult> UpdateUser(int id, UpdateUserModel updatedUser)
         {
+            if (updatedUser == null)
+            {
+                return Results.BadRequest("Päivityspyyntö on virheellinen.");
+            }
+
             try
             {
                 using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
@@ -127,26 +132,52 @@ namespace Backend.Api
                     await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"
-                        UPDATE Users
-                        SET Email = @Email, Role = @Role, PasswordHash = @PasswordHash, FirstName = @FirstName, LastName = @LastName, Address = @Address, PhoneNumber = @PhoneNumber
-                        WHERE UserID = @UserID";
+                    command.CommandText = "SELECT UserID, Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber FROM Users WHERE UserID = @UserID";
                     command.Parameters.AddWithValue("@UserID", id);
-                    command.Parameters.AddWithValue("@Email", updatedUser.Email);
-                    command.Parameters.AddWithValue("@Role", updatedUser.Role);
-                    command.Parameters.AddWithValue("@PasswordHash", HashPassword(updatedUser.PasswordHash));
-                    command.Parameters.AddWithValue("@FirstName", updatedUser.FirstName);
-                    command.Parameters.AddWithValue("@LastName", updatedUser.LastName);
-                    command.Parameters.AddWithValue("@Address", updatedUser.Address);
-                    command.Parameters.AddWithValue("@PhoneNumber", updatedUser.PhoneNumber);
 
-                    var result = await command.ExecuteNonQueryAsync();
-                    if (result == 0)
+                    using var reader = await command.ExecuteReaderAsync();
+                    if (!await reader.ReadAsync())
                     {
-                        return Results.NotFound("Käyttäjää ei löytynyt.");
+                        return Results.NotFound($"Käyttäjää ID:llä {id} ei löytynyt.");
                     }
 
-                    return Results.Ok("Käyttäjän tiedot päivitetty.");
+                    var user = new UserModel
+                    {
+                        UserID = reader.GetInt32(0),
+                        Email = reader.GetString(1),
+                        Role = reader.GetString(2),
+                        PasswordHash = reader.GetString(3),
+                        FirstName = reader.GetString(4),
+                        LastName = reader.GetString(5),
+                        Address = reader.GetString(6),
+                        PhoneNumber = reader.GetString(7)
+                    };
+
+                    user.Email = updatedUser.Email ?? user.Email;
+                    user.Role = updatedUser.Role ?? user.Role;
+                    user.PasswordHash = updatedUser.PasswordHash != null ? HashPassword(updatedUser.PasswordHash) : user.PasswordHash;
+                    user.FirstName = updatedUser.FirstName ?? user.FirstName;
+                    user.LastName = updatedUser.LastName ?? user.LastName;
+                    user.Address = updatedUser.Address ?? user.Address;
+                    user.PhoneNumber = updatedUser.PhoneNumber ?? user.PhoneNumber;
+
+                    command = connection.CreateCommand();
+                    command.CommandText = @"
+                    UPDATE Users
+                    SET Email = @Email, Role = @Role, PasswordHash = @PasswordHash, FirstName = @FirstName, LastName = @LastName, Address = @Address, PhoneNumber = @PhoneNumber
+                    WHERE UserID = @UserID";
+
+                    command.Parameters.AddWithValue("@Email", user.Email);
+                    command.Parameters.AddWithValue("@Role", user.Role);
+                    command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+                    command.Parameters.AddWithValue("@FirstName", user.FirstName);
+                    command.Parameters.AddWithValue("@LastName", user.LastName);
+                    command.Parameters.AddWithValue("@Address", user.Address);
+                    command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
+                    command.Parameters.AddWithValue("@UserID", id);
+
+                    await command.ExecuteNonQueryAsync();
+                    return Results.Ok(user);
                 }
             }
             catch (Exception ex)

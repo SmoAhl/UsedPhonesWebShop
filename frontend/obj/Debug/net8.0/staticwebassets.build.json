@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "BV1vancWumrpn6P7jQWoCHtGC4IMHZkEaTx9mxNxWys=",
+  "Hash": "tamutwWSXVPabdp9pkwQK211l1fuH+Aq8W2KtsSdcuY=",
   "Source": "frontend",
   "BasePath": "/",
   "Mode": "Root",
@@ -7976,6 +7976,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\css\\site.css",
+      "SourceId": "frontend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site.css"
     },
     {
       "Identity": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\frontend\\wwwroot\\favicon.png",

@@ -75,8 +75,8 @@ namespace Backend.Api
                     // Tarkistetaan, onko käyttäjä antanut arvon "brand"-parametriin. Jos kyllä, lisätään kyselyyn suodatus kyseisen merkin perusteella.
                     if (!string.IsNullOrEmpty(brand))
                     {
-                        query += " AND Brand = @brand"; // SQL-kyselyyn lisätään suodatusehto, jossa merkki vastaa käyttäjän syöttämää arvoa.
-                        command.Parameters.AddWithValue("@brand", brand); // Parametrien avulla vältetään SQL-injektiot.
+                        query += " AND Brand = @brand";
+                        command.Parameters.AddWithValue("@brand", brand);
                     }
 
                     // Tarkistetaan, onko käyttäjä antanut arvon "model"-parametriin. Jos kyllä, lisätään suodatus kyseisen mallin perusteella.
