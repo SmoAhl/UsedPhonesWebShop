@@ -5,6 +5,7 @@ C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\n
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\backend.runtimeconfig.json
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\backend.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\backend.pdb
+C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\BCrypt.Net-Next.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\Blazored.LocalStorage.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\simoa\OneDrive\Documents\GITREPOS\UsedPhonesWebShop\backend\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll

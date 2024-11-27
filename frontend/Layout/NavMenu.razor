@@ -1,5 +1,7 @@
 @using Microsoft.AspNetCore.Components
 @using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <!-- Ylätason navigointipalkki -->
 <div class="top-row ps-3 navbar navbar-dark">
@@ -23,22 +25,13 @@
                 <span class="bi bi-phone" aria-hidden="true"></span> Tuotteet
             </NavLink>
         </div>
-        @if (isUserLoggedIn)
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/register" Match="NavLinkMatch.Prefix">
+                <span class="bi bi-person-plus-fill" aria-hidden="true"></span> Rekisteröidy
+            </NavLink>
+        </div>
+        @if (!isUserLoggedIn)
         {
-            <!-- Linkki uloskirjautumiseen -->
-            <div class="nav-item px-3">
-                <button class="nav-link btn btn-link text-start" @onclick="Logout">
-                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Kirjaudu ulos
-                </button>
-            </div>
-        }
-        else
-        {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/register" Match="NavLinkMatch.Prefix">
-                    <span class="bi bi-person-plus-fill" aria-hidden="true"></span> Rekisteröidy
-                </NavLink>
-            </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/login" Match="NavLinkMatch.Prefix">
                     <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Kirjaudu sisään
@@ -50,6 +43,15 @@
                 <span class="bi bi-gear-fill" aria-hidden="true"></span> Käyttäjätilien Hallinta
             </NavLink>
         </div>
+        @if (isUserLoggedIn)
+        {
+            <!-- Linkki uloskirjautumiseen -->
+            <div class="nav-item px-3 mt-auto">
+                <button class="nav-link btn btn-link text-start" @onclick="Logout">
+                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Kirjaudu ulos
+                </button>
+            </div>
+        }
     </nav>
 </div>
 
@@ -67,9 +69,24 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authStateProvider = AuthenticationStateProvider as AuthenticationStateProvider;
+        if (authStateProvider != null)
+        {
+            authStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        }
+        await CheckUserLoggedIn();
+    }
+
+    private async Task CheckUserLoggedIn()
+    {
         var token = await localStorage.GetItemAsync<string>("authToken");
         isUserLoggedIn = !string.IsNullOrEmpty(token); // Check if the user is logged in
         StateHasChanged(); // Päivitä UI, kun tieto on saatu
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await CheckUserLoggedIn();
     }
 
     private async Task Logout()
@@ -78,6 +95,7 @@
 
         if (response.IsSuccessStatusCode)
         {
+            await localStorage.RemoveItemAsync("authToken");
             isUserLoggedIn = false; // Päivitä kirjautumistila
             StateHasChanged(); // Päivitä UI
             NavigationManager.NavigateTo("/");

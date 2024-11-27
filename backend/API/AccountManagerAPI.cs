@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Shared.Models;
 using Shared.DTOs;
-using System.Security.Cryptography;
-using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Api
 {
@@ -15,57 +15,77 @@ namespace Backend.Api
         /// </summary>
         public static void MapAccountManagerApi(this WebApplication app)
         {
-            app.MapPost("/api/auth/register", RegisterUser);
-            app.MapGet("/api/auth/users", GetAllUsers);
-            app.MapDelete("/api/auth/users/{id}", DeleteUser);
-            app.MapPut("/api/auth/updateuser/{id}", UpdateUser);
+            var group = app.MapGroup("/api/auth");
+            group.MapPost("/register", RegisterUser); // No Authorize attribute
+            group.MapGet("/users", GetAllUsers).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }); // Admin only
+            group.MapDelete("/users/{id}", DeleteUser).RequireAuthorization(new AuthorizeAttribute { Roles = "Admin" }); // Admin only
+            group.MapPut("/updateuser/{id}", UpdateUser).RequireAuthorization(); // Requires authorization
         }
 
         /// <summary>
         /// Registers a new user.
         /// </summary>
-        /// <param name="user">The user model.</param>
+        /// <param name="registerRequest">The register request model.</param>
         /// <returns>The registration result.</returns>
-        public static async Task<IResult> RegisterUser(UserModel user)
+        public static async Task<IResult> RegisterUser(RegisterRequest registerRequest)
         {
             try
             {
-                using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
+                Console.WriteLine($"Registration attempt for user: {registerRequest.Email}");
+                if (string.IsNullOrWhiteSpace(registerRequest.Password))
                 {
-                    await connection.OpenAsync();
-
-                    var checkUserCommand = connection.CreateCommand();
-                    checkUserCommand.CommandText = "SELECT COUNT(1) FROM Users WHERE Email = @Email";
-                    checkUserCommand.Parameters.AddWithValue("@Email", user.Email);
-
-                    var exists = Convert.ToInt32(await checkUserCommand.ExecuteScalarAsync()) > 0;
-                    if (exists)
-                    {
-                        return Results.BadRequest(new { Error = "Käyttäjä on jo olemassa." });
-                    }
-
-                    user.PasswordHash = HashPassword(user.PasswordHash);
-
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"
-                        INSERT INTO Users (Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber, CreatedDate)
-                        VALUES (@Email, @Role, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, CURRENT_TIMESTAMP)";
-                    command.Parameters.AddWithValue("@Email", user.Email);
-                    command.Parameters.AddWithValue("@Role", user.Role);
-                    command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-                    command.Parameters.AddWithValue("@FirstName", user.FirstName);
-                    command.Parameters.AddWithValue("@LastName", user.LastName);
-                    command.Parameters.AddWithValue("@Address", user.Address);
-                    command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-
-                    await command.ExecuteNonQueryAsync();
+                    Console.WriteLine("Password is empty or null.");
+                    return Results.BadRequest(new { Error = "Salasana ei voi olla tyhjä." });
                 }
 
-                return Results.Ok("Rekisteröinti onnistui.");
+                if (string.IsNullOrWhiteSpace(registerRequest.Email) ||
+                    string.IsNullOrWhiteSpace(registerRequest.FirstName) ||
+                    string.IsNullOrWhiteSpace(registerRequest.LastName) ||
+                    string.IsNullOrWhiteSpace(registerRequest.Address) ||
+                    string.IsNullOrWhiteSpace(registerRequest.PhoneNumber))
+                {
+                    Console.WriteLine("One or more fields are empty.");
+                    return Results.BadRequest(new { Error = "Kaikki kentät ovat pakollisia." });
+                }
+
+                using var connection = new SqliteConnection("Data Source=UsedPhonesShop.db");
+                await connection.OpenAsync();
+                Console.WriteLine("Database connection opened successfully.");
+
+                var checkUserCommand = connection.CreateCommand();
+                checkUserCommand.CommandText = "SELECT COUNT(1) FROM Users WHERE Email = @Email";
+                checkUserCommand.Parameters.AddWithValue("@Email", registerRequest.Email);
+
+                var exists = Convert.ToInt32(await checkUserCommand.ExecuteScalarAsync()) > 0;
+                if (exists)
+                {
+                    Console.WriteLine($"User already exists: {registerRequest.Email}");
+                    return Results.BadRequest(new { Error = "Käyttäjä on jo olemassa." });
+                }
+
+                var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
+                Console.WriteLine("Password hashing successful.");
+
+                var insertUserCommand = connection.CreateCommand();
+                insertUserCommand.CommandText = @"
+                    INSERT INTO Users (Email, PasswordHash, FirstName, LastName, Address, PhoneNumber, Role) 
+                    VALUES (@Email, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, 'User')";
+                insertUserCommand.Parameters.AddWithValue("@Email", registerRequest.Email);
+                insertUserCommand.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                insertUserCommand.Parameters.AddWithValue("@FirstName", registerRequest.FirstName);
+                insertUserCommand.Parameters.AddWithValue("@LastName", registerRequest.LastName);
+                insertUserCommand.Parameters.AddWithValue("@Address", registerRequest.Address);
+                insertUserCommand.Parameters.AddWithValue("@PhoneNumber", registerRequest.PhoneNumber);
+
+                Console.WriteLine("Inserting user into database.");
+                await insertUserCommand.ExecuteNonQueryAsync();
+                Console.WriteLine($"User registered successfully: {registerRequest.Email}");
+                return Results.Ok(new { Message = "Rekisteröinti onnistui." });
             }
             catch (Exception ex)
             {
-                return Results.Problem($"Virhe käyttäjän rekisteröinnissä: {ex.Message}");
+                Console.WriteLine($"Error during registration: {ex.Message}");
+                return Results.Problem("Rekisteröinti epäonnistui.");
             }
         }
 
@@ -73,13 +93,16 @@ namespace Backend.Api
         /// Gets all users.
         /// </summary>
         /// <returns>The list of users.</returns>
+        [Authorize(Roles = "Admin")]
         public static async Task<IResult> GetAllUsers()
         {
             try
             {
+                Console.WriteLine("Fetching all users.");
                 using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
                 {
                     await connection.OpenAsync();
+                    Console.WriteLine("Database connection opened successfully.");
 
                     var command = connection.CreateCommand();
                     command.CommandText = "SELECT UserID, Email, Role, FirstName, LastName, Address, PhoneNumber, CreatedDate FROM Users";
@@ -94,20 +117,22 @@ namespace Backend.Api
                                 UserID = reader.GetInt32(0),
                                 Email = reader.GetString(1),
                                 Role = reader.GetString(2),
-                                FirstName = reader.GetString(3),
-                                LastName = reader.GetString(4),
-                                Address = reader.GetString(5),
-                                PhoneNumber = reader.GetString(6),
-                                CreatedDate = reader.GetDateTime(7)
+                                FirstName = reader.IsDBNull(3) ? null : reader.GetString(3),
+                                LastName = reader.IsDBNull(4) ? null : reader.GetString(4),
+                                Address = reader.IsDBNull(5) ? null : reader.GetString(5),
+                                PhoneNumber = reader.IsDBNull(6) ? null : reader.GetString(6),
+                                CreatedDate = reader.IsDBNull(7) ? (DateTime?)null : reader.GetDateTime(7)
                             });
                         }
                     }
 
+                    Console.WriteLine("Users fetched successfully.");
                     return Results.Ok(users);
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error fetching users: {ex.Message}");
                 return Results.Problem($"Virhe käyttäjien hakemisessa: {ex.Message}");
             }
         }
@@ -116,73 +141,80 @@ namespace Backend.Api
         /// Updates a user by ID.
         /// </summary>
         /// <param name="id">The ID of the user.</param>
-        /// <param name="updatedUser">The updated user model.</param>
+        /// <param name="updateRequest">The updated user request model.</param>
         /// <returns>The update result.</returns>
-        public static async Task<IResult> UpdateUser(int id, UpdateUserModel updatedUser)
+        [Authorize]
+        public static async Task<IResult> UpdateUser(int id, UpdateUserRequest updateRequest, HttpContext context)
         {
-            if (updatedUser == null)
-            {
-                return Results.BadRequest("Päivityspyyntö on virheellinen.");
-            }
-
             try
             {
-                using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
+                var user = context.User;
+                if (user.Identity == null || !user.Identity.IsAuthenticated)
                 {
-                    await connection.OpenAsync();
+                    Console.WriteLine("Unauthorized access attempt.");
+                    return Results.Unauthorized();
+                }
 
-                    var command = connection.CreateCommand();
-                    command.CommandText = "SELECT UserID, Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber FROM Users WHERE UserID = @UserID";
-                    command.Parameters.AddWithValue("@UserID", id);
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    Console.WriteLine("User ID claim not found.");
+                    return Results.Unauthorized();
+                }
 
-                    using var reader = await command.ExecuteReaderAsync();
-                    if (!await reader.ReadAsync())
-                    {
-                        return Results.NotFound($"Käyttäjää ID:llä {id} ei löytynyt.");
-                    }
+                int userId = int.Parse(userIdClaim.Value);
+                var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
 
-                    var user = new UserModel
-                    {
-                        UserID = reader.GetInt32(0),
-                        Email = reader.GetString(1),
-                        Role = reader.GetString(2),
-                        PasswordHash = reader.GetString(3),
-                        FirstName = reader.GetString(4),
-                        LastName = reader.GetString(5),
-                        Address = reader.GetString(6),
-                        PhoneNumber = reader.GetString(7)
-                    };
+                if (userRole != "Admin" && userId != id)
+                {
+                    Console.WriteLine("Unauthorized access attempt.");
+                    return Results.Unauthorized();
+                }
 
-                    user.Email = updatedUser.Email ?? user.Email;
-                    user.Role = updatedUser.Role ?? user.Role;
-                    user.PasswordHash = updatedUser.PasswordHash != null ? HashPassword(updatedUser.PasswordHash) : user.PasswordHash;
-                    user.FirstName = updatedUser.FirstName ?? user.FirstName;
-                    user.LastName = updatedUser.LastName ?? user.LastName;
-                    user.Address = updatedUser.Address ?? user.Address;
-                    user.PhoneNumber = updatedUser.PhoneNumber ?? user.PhoneNumber;
+                using var connection = new SqliteConnection("Data Source=UsedPhonesShop.db");
+                await connection.OpenAsync();
+                Console.WriteLine("Database connection opened successfully.");
 
-                    command = connection.CreateCommand();
-                    command.CommandText = @"
-                    UPDATE Users
-                    SET Email = @Email, Role = @Role, PasswordHash = @PasswordHash, FirstName = @FirstName, LastName = @LastName, Address = @Address, PhoneNumber = @PhoneNumber
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT UserID, Email, Role, PasswordHash, FirstName, LastName, Address, PhoneNumber FROM Users WHERE UserID = @UserID";
+                command.Parameters.AddWithValue("@UserID", id);
+
+                using var reader = await command.ExecuteReaderAsync();
+                if (!await reader.ReadAsync())
+                {
+                    Console.WriteLine($"User not found: {id}");
+                    return Results.NotFound($"Käyttäjää ID:llä {id} ei löytynyt.");
+                }
+
+                var updateCommand = connection.CreateCommand();
+                updateCommand.CommandText = @"
+                    UPDATE Users SET 
+                        Email = @Email,
+                        Role = @Role,
+                        PasswordHash = @PasswordHash,
+                        FirstName = @FirstName,
+                        LastName = @LastName,
+                        Address = @Address,
+                        PhoneNumber = @PhoneNumber
                     WHERE UserID = @UserID";
 
-                    command.Parameters.AddWithValue("@Email", user.Email);
-                    command.Parameters.AddWithValue("@Role", user.Role);
-                    command.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-                    command.Parameters.AddWithValue("@FirstName", user.FirstName);
-                    command.Parameters.AddWithValue("@LastName", user.LastName);
-                    command.Parameters.AddWithValue("@Address", user.Address);
-                    command.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-                    command.Parameters.AddWithValue("@UserID", id);
+                updateCommand.Parameters.AddWithValue("@Email", updateRequest.Email ?? reader.GetString(1));
+                updateCommand.Parameters.AddWithValue("@Role", updateRequest.Role ?? reader.GetString(2));
+                updateCommand.Parameters.AddWithValue("@PasswordHash", string.IsNullOrWhiteSpace(updateRequest.Password) ? reader.GetString(3) : BCrypt.Net.BCrypt.HashPassword(updateRequest.Password));
+                updateCommand.Parameters.AddWithValue("@FirstName", updateRequest.FirstName ?? reader.GetString(4));
+                updateCommand.Parameters.AddWithValue("@LastName", updateRequest.LastName ?? reader.GetString(5));
+                updateCommand.Parameters.AddWithValue("@Address", updateRequest.Address ?? reader.GetString(6));
+                updateCommand.Parameters.AddWithValue("@PhoneNumber", updateRequest.PhoneNumber ?? reader.GetString(7));
+                updateCommand.Parameters.AddWithValue("@UserID", id);
 
-                    await command.ExecuteNonQueryAsync();
-                    return Results.Ok(user);
-                }
+                await updateCommand.ExecuteNonQueryAsync();
+                Console.WriteLine("User updated successfully.");
+                return Results.Ok("Käyttäjän tiedot päivitetty onnistuneesti.");
             }
             catch (Exception ex)
             {
-                return Results.Problem($"Virhe käyttäjän tietojen päivittämisessä: {ex.Message}");
+                Console.WriteLine($"Error updating user: {ex.Message}");
+                return Results.Problem($"Virhe käyttäjän päivittämisessä: {ex.Message}");
             }
         }
 
@@ -191,43 +223,35 @@ namespace Backend.Api
         /// </summary>
         /// <param name="id">The ID of the user.</param>
         /// <returns>The result of the deletion.</returns>
+        [Authorize(Roles = "Admin")]
         public static async Task<IResult> DeleteUser(int id)
         {
             try
             {
-                using (var connection = new SqliteConnection("Data Source=UsedPhonesShop.db"))
+                Console.WriteLine($"Deleting user ID: {id}");
+                using var connection = new SqliteConnection("Data Source=UsedPhonesShop.db");
+                await connection.OpenAsync();
+                Console.WriteLine("Database connection opened successfully.");
+
+                var command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM Users WHERE UserID = @UserID";
+                command.Parameters.AddWithValue("@UserID", id);
+
+                var result = await command.ExecuteNonQueryAsync();
+                if (result == 0)
                 {
-                    await connection.OpenAsync();
-
-                    var command = connection.CreateCommand();
-                    command.CommandText = "DELETE FROM Users WHERE UserID = @UserID";
-                    command.Parameters.AddWithValue("@UserID", id);
-
-                    var result = await command.ExecuteNonQueryAsync();
-                    if (result == 0)
-                    {
-                        return Results.NotFound("Käyttäjää ei löytynyt.");
-                    }
-
-                    return Results.Ok("Käyttäjä poistettu onnistuneesti.");
+                    Console.WriteLine("User not found.");
+                    return Results.NotFound("Käyttäjää ei löytynyt.");
                 }
+
+                Console.WriteLine("User deleted successfully.");
+                return Results.Ok("Käyttäjä poistettu onnistuneesti.");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error deleting user: {ex.Message}");
                 return Results.Problem($"Virhe käyttäjän poistamisessa: {ex.Message}");
             }
-        }
-
-        /// <summary>
-        /// Hashes a password.
-        /// </summary>
-        /// <param name="password">The password to hash.</param>
-        /// <returns>The hashed password.</returns>
-        private static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
         }
     }
 }

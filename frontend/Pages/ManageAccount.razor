@@ -1,81 +1,94 @@
 @page "/manage-account"
+@attribute [Authorize(Roles = "Admin")]
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @using Shared.Models
-@using System.Net.Http.Json
+@using System.Security.Claims
 
-<h3>Käyttäjätilien Hallinta</h3>
+<h3>Manage Accounts</h3>
 
-<table>
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Rooli</th>
-            <th>Etunimi</th>
-            <th>Sukunimi</th>
-            <th>Osoite</th>
-            <th>Puhelinnumero</th>
-            <th>Toiminnot</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in users)
-        {
-            <tr>
-                <td>@user.Email</td>
-                <td>@user.Role</td>
-                <td>@user.FirstName</td>
-                <td>@user.LastName</td>
-                <td>@user.Address</td>
-                <td>@user.PhoneNumber</td>
-                <td>
-                    <button @onclick="() => EditUser(user)">Muokkaa</button>
-                    <button @onclick="() => DeleteUser(user.UserID)">Poista</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@if (isEditing)
+@if (!isAuthorized)
 {
-    <EditForm Model="editingUser" OnValidSubmit="UpdateUser">
-        <div>
-            <label>Email:</label>
-            <InputText @bind-Value="editingUser.Email" />
-        </div>
-        <div>
-            <label>Rooli:</label>
-            <InputText @bind-Value="editingUser.Role" />
-        </div>
-        <div>
-            <label>Etunimi:</label>
-            <InputText @bind-Value="editingUser.FirstName" />
-        </div>
-        <div>
-            <label>Sukunimi:</label>
-            <InputText @bind-Value="editingUser.LastName" />
-        </div>
-        <div>
-            <label>Osoite:</label>
-            <InputText @bind-Value="editingUser.Address" />
-        </div>
-        <div>
-            <label>Puhelinnumero:</label>
-            <InputText @bind-Value="editingUser.PhoneNumber" />
-        </div>
-        <button type="submit">Päivitä</button>
-        <button type="button" @onclick="CancelEdit">Peruuta</button>
-    </EditForm>
+    <div class="alert alert-danger">
+        <strong>Pääsy estetty:</strong> Sinulla ei ole oikeuksia tähän toimintoon.
+    </div>
+}
+else
+{
+    @if (users == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Rooli</th>
+                    <th>Etunimi</th>
+                    <th>Sukunimi</th>
+                    <th>Osoite</th>
+                    <th>Puhelinnumero</th>
+                    <th>Toiminnot</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Address</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-2" @onclick="() => EditUser(user)">Muokkaa</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteUser(user.UserID)">Poista</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
 @code {
-    private List<UserModel> users = new();
-    private UserModel editingUser = new();
+    private List<UserModel>? users;
+    private UserModel? editingUser;
     private bool isEditing = false;
+    private bool isAuthorized = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadUsers();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        Console.WriteLine($"Authenticated: {user.Identity?.IsAuthenticated}");
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            Console.WriteLine($"Roles: {string.Join(", ", roles)}");
+
+            if (roles.Contains("Admin"))
+            {
+                isAuthorized = true;
+                await LoadUsers();
+            }
+            else
+            {
+                Console.WriteLine("User is not authorized.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("User is not authenticated.");
+        }
     }
 
     private async Task LoadUsers()
@@ -83,36 +96,30 @@
         try
         {
             users = await Http.GetFromJsonAsync<List<UserModel>>("/api/auth/users");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Virhe käyttäjien lataamisessa: {ex.Message}");
-        }
-    }
-
-    private async Task DeleteUser(int userId)
-    {
-        try
-        {
-            var response = await Http.DeleteAsync($"/api/auth/users/{userId}");
-            if (response.IsSuccessStatusCode)
+            if (users == null)
             {
-                await LoadUsers();
-            }
-            else
-            {
-                Console.WriteLine("Käyttäjän poistaminen epäonnistui.");
+                Console.WriteLine("Failed to load users.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Virhe käyttäjän poistamisessa: {ex.Message}");
+            Console.WriteLine($"Error loading users: {ex.Message}");
         }
     }
 
     private void EditUser(UserModel user)
     {
-        editingUser = user;
+        // Create a copy to avoid directly editing the list
+        editingUser = new UserModel
+            {
+                UserID = user.UserID,
+                Email = user.Email,
+                Role = user.Role,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber
+            };
         isEditing = true;
     }
 
@@ -125,24 +132,47 @@
             {
                 isEditing = false;
                 await LoadUsers();
+                await JSRuntime.InvokeVoidAsync("alert", "Käyttäjä päivitetty onnistuneesti.");
             }
             else
             {
-                Console.WriteLine("Käyttäjän päivittäminen epäonnistui.");
+                await JSRuntime.InvokeVoidAsync("alert", "Käyttäjän päivittäminen epäonnistui.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Virhe käyttäjän päivittämisessä: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Virhe: {ex.Message}");
         }
-        finally
+    }
+
+    private async Task DeleteUser(int userId)
+    {
+        try
         {
-            isEditing = false; // Hide the editing fields
+            var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Haluatko varmasti poistaa tämän käyttäjän?");
+            if (confirmed)
+            {
+                var response = await Http.DeleteAsync($"/api/auth/users/{userId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadUsers();
+                    await JSRuntime.InvokeVoidAsync("alert", "Käyttäjä poistettu onnistuneesti.");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Käyttäjän poistaminen epäonnistui.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Virhe: {ex.Message}");
         }
     }
 
     private void CancelEdit()
     {
-        isEditing = false; // Hide the editing fields
+        isEditing = false;
+        editingUser = null;
     }
 }

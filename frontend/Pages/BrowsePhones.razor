@@ -1,5 +1,5 @@
 @page "/browse-phones"
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager NavigationManager
 @using Shared.Models
 @using System.Net.Http.Json
@@ -122,8 +122,13 @@
     {
         try
         {
-            phones = await Http.GetFromJsonAsync<List<PhoneModel>>("/api/phones");
+            var client = HttpClientFactory.CreateClient("BackendAPI");
+            phones = await client.GetFromJsonAsync<List<PhoneModel>>("/api/phones");
             ApplyFilters();
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Network error: {httpEx.Message}";
         }
         catch (Exception ex)
         {
@@ -183,7 +188,8 @@
     {
         try
         {
-            var response = await Http.DeleteAsync($"/api/phones/{phoneId}");
+            var client = HttpClientFactory.CreateClient("BackendAPI");
+            var response = await client.DeleteAsync($"/api/phones/{phoneId}");
             if (response.IsSuccessStatusCode)
             {
                 phones = phones.Where(p => p.PhoneID != phoneId).ToList();
@@ -228,7 +234,8 @@
     {
         try
         {
-            var response = await Http.PatchAsJsonAsync($"/api/phones/{editingPhone.PhoneID}", editingPhone);
+            var client = HttpClientFactory.CreateClient("BackendAPI");
+            var response = await client.PatchAsJsonAsync($"/api/phones/{editingPhone.PhoneID}", editingPhone);
             if (response.IsSuccessStatusCode)
             {
                 isEditing = false;

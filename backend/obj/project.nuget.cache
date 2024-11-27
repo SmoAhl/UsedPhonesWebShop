@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "rXk76+eNhw9U37ahEXQL53cqqeZUOXLc5c1hId6XzSsy7IKb2592Y4MskwbMe8UIaqBXuhsm+Gx4Tm1iFfyyiw==",
+  "dgSpecHash": "78/Cel5cVAhIaoQz8tbcrcs+Zj2yPTdGoZVGSNDIKqo1GAW4X/R9tqizr051u49bmfXF1at65BtMzcQ2uAMyRw==",
   "success": true,
   "projectFilePath": "C:\\Users\\simoa\\OneDrive\\Documents\\GITREPOS\\UsedPhonesWebShop\\backend\\backend.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\simoa\\.nuget\\packages\\bcrypt.net-next\\4.0.2\\bcrypt.net-next.4.0.2.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\blazored.localstorage\\4.5.0\\blazored.localstorage.4.5.0.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.10\\microsoft.aspnetcore.authentication.jwtbearer.8.0.10.nupkg.sha512",
     "C:\\Users\\simoa\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.0\\microsoft.aspnetcore.authorization.8.0.0.nupkg.sha512",
