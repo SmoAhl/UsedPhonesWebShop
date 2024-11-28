@@ -55,6 +55,42 @@ else
             </tbody>
         </table>
     }
+
+    @if (isEditing && editingUser != null)
+    {
+        <EditForm Model="editingUser" OnValidSubmit="UpdateUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="editingUser.Email" />
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Rooli</label>
+                <InputText id="role" class="form-control" @bind-Value="editingUser.Role" />
+            </div>
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Etunimi</label>
+                <InputText id="firstName" class="form-control" @bind-Value="editingUser.FirstName" />
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Sukunimi</label>
+                <InputText id="lastName" class="form-control" @bind-Value="editingUser.LastName" />
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Osoite</label>
+                <InputText id="address" class="form-control" @bind-Value="editingUser.Address" />
+            </div>
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">Puhelinnumero</label>
+                <InputText id="phoneNumber" class="form-control" @bind-Value="editingUser.PhoneNumber" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Tallenna</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Peruuta</button>
+        </EditForm>
+    }
 }
 
 @code {

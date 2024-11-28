@@ -1,0 +1,140 @@
+@page "/manage-customer-account"
+@attribute [Authorize(Roles = "Customer")]
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+@using Shared.Models
+@using System.Security.Claims
+
+<PageTitle>Manage Customer Account</PageTitle>
+
+<h3>Manage Customer Account</h3>
+
+@if (isAuthenticated)
+{
+    if (isAuthorized)
+    {
+        <EditForm Model="editingUser" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="editingUser.Email" disabled />
+            </div>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <InputText id="firstName" class="form-control" @bind-Value="editingUser.FirstName" />
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <InputText id="lastName" class="form-control" @bind-Value="editingUser.LastName" />
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <InputText id="address" class="form-control" @bind-Value="editingUser.Address" />
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <InputText id="phoneNumber" class="form-control" @bind-Value="editingUser.PhoneNumber" />
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </EditForm>
+    }
+    else
+    {
+        <p>You are not authorized to view this page.</p>
+        <div class="alert alert-danger">
+            <strong>Pääsy estetty:</strong> Sinulla ei ole oikeuksia tähän toimintoon.
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-danger">
+        <strong>Pääsy estetty:</strong> Sinulla ei ole oikeuksia tähän toimintoon.
+    </div>
+}
+
+@code {
+    private UserModel editingUser = new UserModel();
+    private bool isAuthenticated = false;
+    private bool isAuthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        Console.WriteLine($"Authenticated: {user.Identity?.IsAuthenticated}");
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            isAuthenticated = true;
+            var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            Console.WriteLine($"Roles: {string.Join(", ", roles)}");
+
+            if (roles.Contains("Customer"))
+            {
+                isAuthorized = true;
+                await LoadUser();
+            }
+            else
+            {
+                Console.WriteLine("User is not authorized.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("User is not authenticated.");
+        }
+    }
+
+    private async Task LoadUser()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim != null)
+            {
+                int userId = int.Parse(userIdClaim.Value);
+                editingUser = await Http.GetFromJsonAsync<UserModel>($"/api/auth/users/{userId}");
+                if (editingUser == null)
+                {
+                    Console.WriteLine("Failed to load user.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading user: {ex.Message}");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"/api/auth/users/{editingUser.UserID}", editingUser);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("User updated successfully.");
+                await JSRuntime.InvokeVoidAsync("alert", "Käyttäjä päivitetty onnistuneesti.");
+            }
+            else
+            {
+                Console.WriteLine("Failed to update user.");
+                await JSRuntime.InvokeVoidAsync("alert", "Käyttäjän päivittäminen epäonnistui.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating user: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Virhe: {ex.Message}");
+        }
+    }
+}

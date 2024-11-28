@@ -38,11 +38,22 @@
                 </NavLink>
             </div>
         }
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/manage-account" Match="NavLinkMatch.Prefix">
-                <span class="bi bi-gear-fill" aria-hidden="true"></span> Käyttäjätilien Hallinta
-            </NavLink>
-        </div>
+        @if (isAdmin)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/manage-account" Match="NavLinkMatch.Prefix">
+                    <span class="bi bi-gear-fill" aria-hidden="true"></span> Käyttäjätilien Hallinta
+                </NavLink>
+            </div>
+        }
+        @if (isCustomer)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/manage-customer-account" Match="NavLinkMatch.Prefix">
+                    <span class="bi bi-person-circle" aria-hidden="true"></span> Käyttäjän Hallinta
+                </NavLink>
+            </div>
+        }
         @if (isUserLoggedIn)
         {
             <!-- Linkki uloskirjautumiseen -->
@@ -66,6 +77,8 @@
     }
 
     private bool isUserLoggedIn;
+    private bool isAdmin;
+    private bool isCustomer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,6 +88,8 @@
             authStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
         }
         await CheckUserLoggedIn();
+        await CheckUserRoles();
+        StateHasChanged(); // Add this line to update the UI after checking roles
     }
 
     private async Task CheckUserLoggedIn()
@@ -87,6 +102,17 @@
     private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
     {
         await CheckUserLoggedIn();
+        await CheckUserRoles(); // Ensure roles are checked when authentication state changes
+        StateHasChanged(); // Update UI after authentication state changes
+    }
+
+    private async Task CheckUserRoles()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+        isCustomer = user.IsInRole("Customer");
     }
 
     private async Task Logout()
@@ -97,6 +123,8 @@
         {
             await localStorage.RemoveItemAsync("authToken");
             isUserLoggedIn = false; // Päivitä kirjautumistila
+            isAdmin = false; // Reset isAdmin flag
+            isCustomer = false; // Reset isCustomer flag
             StateHasChanged(); // Päivitä UI
             NavigationManager.NavigateTo("/");
         }

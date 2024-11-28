@@ -53,13 +53,16 @@
 
 @code {
     // Käyttäjän tiedot UserModel-oliolla
-    private UserModel User { get; set; } = new UserModel();
+    private UserModel User { get; set; } = new UserModel { Role = "Customer" };
     private string Message { get; set; } = string.Empty; // Viesti rekisteröinnin tuloksesta
     private bool IsSuccess { get; set; } = false;
 
     // Metodi, joka lähettää rekisteröintitiedot backendille
     private async Task HandleRegister()
     {
+        // Ensure the role is set to "Customer"
+        User.Role = "Customer";
+        Console.WriteLine($"User role before sending request: {User.Role}"); // Debug statement
         try
         {
             var response = await Http.PostAsJsonAsync("/api/auth/register", User);

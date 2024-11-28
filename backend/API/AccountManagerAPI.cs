@@ -69,7 +69,7 @@ namespace Backend.Api
                 var insertUserCommand = connection.CreateCommand();
                 insertUserCommand.CommandText = @"
                     INSERT INTO Users (Email, PasswordHash, FirstName, LastName, Address, PhoneNumber, Role) 
-                    VALUES (@Email, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, 'User')";
+                    VALUES (@Email, @PasswordHash, @FirstName, @LastName, @Address, @PhoneNumber, 'Customer')";
                 insertUserCommand.Parameters.AddWithValue("@Email", registerRequest.Email);
                 insertUserCommand.Parameters.AddWithValue("@PasswordHash", passwordHash);
                 insertUserCommand.Parameters.AddWithValue("@FirstName", registerRequest.FirstName);
