@@ -67,6 +67,25 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("phonesapi", new OpenApiInfo { Title = "Phones API", Version = "v1" });
     //c.SwaggerDoc("cartapi", new OpenApiInfo { Title = "Cart API", Version = "v1" });
     //c.SwaggerDoc("offerapi", new OpenApiInfo { Title = "Offer API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+    {
+        new OpenApiSecurityScheme {
+            Reference = new OpenApiReference {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        },
+        new string[] { }
+    }});
 });
 
 var app = builder.Build();

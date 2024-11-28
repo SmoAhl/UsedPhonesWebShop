@@ -110,6 +110,25 @@ namespace Backend.Data
                 await insertAdminCommand.ExecuteNonQueryAsync();
                 Console.WriteLine("Admin käyttäjä lisätty: admin@usedphoneshop.com");
             }
+
+            var checkCustomerCommand = connection.CreateCommand();
+            checkCustomerCommand.CommandText = "SELECT COUNT(*) FROM Users WHERE Email = 'customer@usedphoneshop.com'";
+            var customerExists = (long)await checkCustomerCommand.ExecuteScalarAsync() > 0;
+
+            if (!customerExists)
+            {
+                var insertCustomerCommand = connection.CreateCommand();
+                string customerPassword = "Customer123!";
+                string customerPasswordHash = BCrypt.Net.BCrypt.HashPassword(customerPassword);
+
+                insertCustomerCommand.CommandText = @"
+                    INSERT INTO Users (Role, Email, PasswordHash, FirstName, LastName, Address, PhoneNumber)
+                    VALUES ('Customer', 'customer@usedphoneshop.com', @CustomerPasswordHash, 'Test', 'Customer', '456 Customer Lane', '987654321')";
+                insertCustomerCommand.Parameters.AddWithValue("@CustomerPasswordHash", customerPasswordHash);
+
+                await insertCustomerCommand.ExecuteNonQueryAsync();
+                Console.WriteLine("Testiasiakas lisätty: customer@usedphoneshop.com");
+            }
         }
 
         private static async Task SeedPhones(SqliteConnection connection)
