@@ -25,6 +25,7 @@ namespace frontend.Handlers
                 var token = await _localStorage.GetItemAsync<string>("authToken");
                 if (!string.IsNullOrEmpty(token))
                 {
+                    Console.WriteLine($"Sending token: {token}");
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
             }

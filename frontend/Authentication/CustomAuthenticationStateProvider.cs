@@ -27,10 +27,21 @@ namespace frontend.Authentication
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
 
-                identity = new ClaimsIdentity(jwtToken.Claims, "Bearer");
+                identity = new ClaimsIdentity(jwtToken.Claims.Distinct().Select(c =>
+                    c.Type == "nameid" ? new Claim(ClaimTypes.NameIdentifier, c.Value) :
+                    c.Type == "email" ? new Claim(ClaimTypes.Email, c.Value) :
+                    c.Type == "role" ? new Claim(ClaimTypes.Role, c.Value) :
+                    c
+                ).ToList(), "Bearer");
 
-                // Lisää roolit ClaimTypes.Role-tyyppisenä
-                var roleClaims = jwtToken.Claims.Where(c => c.Type == "role");
+                Console.WriteLine("Token Claims:");
+                foreach (var claim in jwtToken.Claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
+
+                // Add roles only once
+                var roleClaims = jwtToken.Claims.Where(c => c.Type == "role").Distinct();
                 foreach (var claim in roleClaims)
                 {
                     identity.AddClaim(new Claim(ClaimTypes.Role, claim.Value));

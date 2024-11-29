@@ -7,6 +7,14 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Shared.Models
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.JSInterop
+@using System.Net.Http.Json
+
+// Tämä komponentti hallinnoi Customer-roolin käyttäjien tilitietojen päivittämistä.
+// 1. Customer voi nähdä ja muokata vain omia tietojaan.
+// 2. Oikeudet ja autentikointi varmistetaan JWT-tokenin avulla.
+// 3. API-yhteys kohdistuu `AccountManagerApi`-reitteihin, erityisesti `GetCurrentUser` ja `UpdateUser`.
 
 <PageTitle>Manage Customer Account</PageTitle>
 
@@ -16,32 +24,69 @@
 {
     if (isAuthorized)
     {
-        <EditForm Model="editingUser" OnValidSubmit="HandleValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
+        @if (editingUser == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Etunimi</th>
+                        <th>Sukunimi</th>
+                        <th>Osoite</th>
+                        <th>Puhelinnumero</th>
+                        <th>Toiminnot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@editingUser.Email</td>
+                        <td>@editingUser.FirstName</td>
+                        <td>@editingUser.LastName</td>
+                        <td>@editingUser.Address</td>
+                        <td>@editingUser.PhoneNumber</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-2" @onclick="EditUser">Muokkaa</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <InputText id="email" class="form-control" @bind-Value="editingUser.Email" disabled />
-            </div>
-            <div class="form-group">
-                <label for="firstName">First Name</label>
-                <InputText id="firstName" class="form-control" @bind-Value="editingUser.FirstName" />
-            </div>
-            <div class="form-group">
-                <label for="lastName">Last Name</label>
-                <InputText id="lastName" class="form-control" @bind-Value="editingUser.LastName" />
-            </div>
-            <div class="form-group">
-                <label for="address">Address</label>
-                <InputText id="address" class="form-control" @bind-Value="editingUser.Address" />
-            </div>
-            <div class="form-group">
-                <label for="phoneNumber">Phone Number</label>
-                <InputText id="phoneNumber" class="form-control" @bind-Value="editingUser.PhoneNumber" />
-            </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-        </EditForm>
+        @if (isEditing && editingUser != null)
+        {
+            <EditForm Model="editingUser" OnValidSubmit="UpdateUser">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <InputText id="email" class="form-control" @bind-Value="editingUser.Email" disabled />
+                </div>
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">Etunimi</label>
+                    <InputText id="firstName" class="form-control" @bind-Value="editingUser.FirstName" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Sukunimi</label>
+                    <InputText id="lastName" class="form-control" @bind-Value="editingUser.LastName" />
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Osoite</label>
+                    <InputText id="address" class="form-control" @bind-Value="editingUser.Address" />
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Puhelinnumero</label>
+                    <InputText id="phoneNumber" class="form-control" @bind-Value="editingUser.PhoneNumber" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Tallenna</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Peruuta</button>
+            </EditForm>
+        }
     }
     else
     {
@@ -62,6 +107,7 @@ else
     private UserModel editingUser = new UserModel();
     private bool isAuthenticated = false;
     private bool isAuthorized = false;
+    private bool isEditing = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,6 +115,7 @@ else
         var user = authState.User;
 
         Console.WriteLine($"Authenticated: {user.Identity?.IsAuthenticated}");
+        Console.WriteLine($"User: {user.Identity?.Name}");
 
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
@@ -92,21 +139,46 @@ else
         }
     }
 
+    // Hakee kirjautuneen Customer-käyttäjän tiedot API:n kautta.
+    // Käytetään `/api/auth/currentuser`-reittiä, joka palauttaa vain kirjautuneen käyttäjän tiedot.
+    // Tarkista, että `UserID`-arvo on oikein ja ettei se ole nolla.
     private async Task LoadUser()
     {
         try
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null)
+
+            Console.WriteLine("User Claims:");
+            foreach (var claim in user.Claims)
             {
-                int userId = int.Parse(userIdClaim.Value);
-                editingUser = await Http.GetFromJsonAsync<UserModel>($"/api/auth/users/{userId}");
-                if (editingUser == null)
-                {
-                    Console.WriteLine("Failed to load user.");
-                }
+                Console.WriteLine($"{claim.Type}: {claim.Value}");
+            }
+
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                Console.WriteLine("User ID claim is missing.");
+                return;
+            }
+
+            if (!int.TryParse(userIdClaim.Value, out int userId) || userId == 0)
+            {
+                Console.WriteLine("Invalid User ID claim.");
+                return;
+            }
+
+            Console.WriteLine($"Loading user with ID: {userId}");
+
+            editingUser = await Http.GetFromJsonAsync<UserModel>("/api/auth/currentuser");
+            if (editingUser == null || editingUser.UserID == 0)
+            {
+                Console.WriteLine("Failed to load user or UserID is invalid.");
+            }
+            else
+            {
+                Console.WriteLine($"User loaded: {editingUser.Email}, ID: {editingUser.UserID}");
             }
         }
         catch (Exception ex)
@@ -115,26 +187,50 @@ else
         }
     }
 
-    private async Task HandleValidSubmit()
+    private void EditUser()
+    {
+        Console.WriteLine("EditUser called");
+        isEditing = true;
+    }
+
+    // Päivittää kirjautuneen Customer-käyttäjän tiedot API:n kautta.
+    // Lähettää PUT-pyynnön `/api/auth/updateuser/{UserID}`-reitille.
+    // Tarkista, että API vastaa onnistuneesti (statuskoodi 200) ja antaa virheilmoituksen, jos päivitys epäonnistuu.
+    private async Task UpdateUser()
     {
         try
         {
-            var response = await Http.PutAsJsonAsync($"/api/auth/users/{editingUser.UserID}", editingUser);
+            if (editingUser.UserID == 0)
+            {
+                Console.WriteLine("UserID is invalid. Cannot proceed with update.");
+                await JSRuntime.InvokeVoidAsync("alert", "Käyttäjän ID on virheellinen. Päivitys epäonnistui.");
+                return;
+            }
+
+            Console.WriteLine($"Updating user with ID: {editingUser.UserID}");
+            var response = await Http.PutAsJsonAsync($"/api/auth/updateuser/{editingUser.UserID}", editingUser);
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("User updated successfully.");
+                Console.WriteLine("User updated successfully");
+                isEditing = false;
+                await LoadUser();
                 await JSRuntime.InvokeVoidAsync("alert", "Käyttäjä päivitetty onnistuneesti.");
             }
             else
             {
-                Console.WriteLine("Failed to update user.");
+                Console.WriteLine("Failed to update user");
                 await JSRuntime.InvokeVoidAsync("alert", "Käyttäjän päivittäminen epäonnistui.");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error updating user: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", $"Virhe: {ex.Message}");
         }
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+        editingUser = null;
     }
 }

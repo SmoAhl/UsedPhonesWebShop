@@ -53,7 +53,7 @@ namespace Backend.Api
 
                 var userId = reader.GetInt32(0);
                 var role = reader.GetString(2);
-                Console.WriteLine($"User authenticated: {loginRequest.Email}, Role: {role}");
+                Console.WriteLine($"User authenticated: {loginRequest.Email}, Role: {role}, UserID: {userId}");
 
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(jwtKey);
@@ -61,7 +61,7 @@ namespace Backend.Api
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
-                        new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                        new Claim(ClaimTypes.NameIdentifier, userId.ToString()), // Ensure UserID is added here
                         new Claim(ClaimTypes.Email, loginRequest.Email),
                         new Claim(ClaimTypes.Role, role)
                     }),
@@ -72,6 +72,11 @@ namespace Backend.Api
                 var tokenString = tokenHandler.WriteToken(token);
 
                 Console.WriteLine("Token generated successfully.");
+                Console.WriteLine("Token Claims:");
+                foreach (var claim in tokenDescriptor.Subject.Claims)
+                {
+                    Console.WriteLine($"{claim.Type}: {claim.Value}");
+                }
                 return Results.Ok(new { Token = tokenString, Expiration = tokenDescriptor.Expires });
             }
             catch (Exception ex)
@@ -103,6 +108,12 @@ namespace Backend.Api
                 return Results.Unauthorized();
             }
 
+            Console.WriteLine("User Claims:");
+            foreach (var claim in user.Claims)
+            {
+                Console.WriteLine($"{claim.Type}: {claim.Value}");
+            }
+
             int userId = int.Parse(userIdClaim.Value);
             Console.WriteLine($"Fetching data for user ID: {userId}");
 
@@ -128,12 +139,12 @@ namespace Backend.Api
                     PhoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? null : reader.GetString(reader.GetOrdinal("PhoneNumber")),
                 };
 
-                Console.WriteLine("User data retrieved successfully.");
+                Console.WriteLine($"UserModel: {userModel.Email}, {userModel.UserID}");
                 return Results.Ok(userModel);
             }
 
             Console.WriteLine("User not found.");
-            return Results.Unauthorized();
+            return Results.NotFound("User not found.");
         }
 
         private static bool VerifyPassword(string enteredPassword, string storedHash)

@@ -165,9 +165,9 @@ namespace Backend.Api
                 int userId = int.Parse(userIdClaim.Value);
                 var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
 
-                if (userRole != "Admin" && userId != id)
+                if (userRole == "Customer" && userId != id)
                 {
-                    Console.WriteLine("Unauthorized access attempt.");
+                    Console.WriteLine($"Unauthorized update attempt by Customer (ID: {userId}) for User (ID: {id}).");
                     return Results.Unauthorized();
                 }
 

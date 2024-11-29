@@ -60,10 +60,19 @@ namespace frontend.Services
 
         public async Task<UserDto?> GetCurrentUser()
         {
-            var response = await _httpClient.GetAsync("/api/auth/currentuser");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return await response.Content.ReadFromJsonAsync<UserDto>();
+                var response = await _httpClient.GetAsync("/api/auth/currentuser");
+                if (response.IsSuccessStatusCode)
+                {
+                    var user = await response.Content.ReadFromJsonAsync<UserDto>();
+                    Console.WriteLine($"UserModel: {user?.Email}, {user?.UserID}");
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading current user: {ex.Message}");
             }
             return null;
         }
